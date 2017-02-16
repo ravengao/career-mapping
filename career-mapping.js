@@ -1,13 +1,9 @@
 function collapseToMainbar(){
 	collapseButton.select(".noresult").remove();
 	current = '';
-	d3.selectAll(".majorVQRHighlightBar0").remove();
-	d3.selectAll(".majorVQRHighlightBar1").remove();
-	d3.selectAll(".occupationVQRHighlightBar0").remove();
-	d3.selectAll(".occupationVQRHighlightBar1").remove();
 
 	if (this.id == 'college' && college.click!='?'){
-		d3.selectAll(".majorDot").transition().duration(200).style("fill-opacity",1).attr("stroke-width",0);
+		d3.selectAll(".majorDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
 		d3.selectAll(".collegeCollapseButton").attr("visibility","hidden");
 
 		d3.selectAll(".collegeSubbar").remove();
@@ -55,7 +51,7 @@ function collapseToMainbar(){
 
 	
 	if (this.id == 'occupationGroup' && occupationGroup.click!='?'){
-	d3.selectAll(".occupationDot").transition().duration(200).style("fill-opacity",1).attr("stroke-width",0);
+	d3.selectAll(".occupationDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
 	d3.selectAll(".occupationCollapseButton").attr("visibility","hidden");
 		d3.selectAll(".occupationSubbar").remove();
 		minn=10;
@@ -102,6 +98,8 @@ function collapseToMainbar(){
 
 	}
 	else if(search_click){
+		d3.selectAll(".majorDot").transition().duration(animationTime).style("fill-opacity",1).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").transition().duration(animationTime).style("fill-opacity",1).attr("stroke-width",0);
 		d3.selectAll(".collegeCollapseButton").attr("visibility","hidden");
 		d3.selectAll(".occupationCollapseButton").attr("visibility","hidden");
 		minn=10;
@@ -236,7 +234,7 @@ function clickOnCollegeMainbar(d,i) {
 		.attr("y", function (d){startpoint=collegeX[i];return collegeX[i];})
 		.attr("fill-opacity",0)//change underlying color or mainbar
 		.attr("stroke-width", 6)
-		.attr("stroke", this.style.fill);
+		.attr("stroke", this.parentNode.childNodes[0].style.fill);
 
 	college_click = true;
 	idBuff=this.id;
@@ -307,7 +305,7 @@ function clickOnOccupationMainbar(d,i){
 		.attr("y", function (d){startpoint=occupationGroupX[i];return occupationGroupX[i];})
 		.attr("fill-opacity",0)
 		.attr("stroke-width", 6)
-		.attr("stroke", this.style.fill);
+		.attr("stroke", this.parentNode.childNodes[0].style.fill);
 
 	occupationGroup_click = true;
 	idBuff=this.id;
@@ -565,24 +563,6 @@ function mouseoverMajor(){
 			majorDescription.transition()		
                 .duration(200)		
                 .style("opacity", .9);	
-		    //dd
-			// var majorVQRHighlightBar=svg.selectAll(".majorVQRHighlightBar")
-	  //           .data(majorVQRBuff)
-	  //           .enter().append("g")
-	  //           .attr("class","majorVQRHighlightBar");
-
-	  //           majorVQRHighlightBar.append("rect") 
-	  //               .attr("x",function (d,i,j) { return 93-160+ d*172 - 3; })
-	  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-	  //               .attr("height",function (d,i,j) { return 0;})
-	  //               .attr("width",6)
-	  //               .style("opacity",0)
-	  //               .style("fill", "#EF2512");
-
-	  //           majorVQRHighlightBar.selectAll("rect").transition().duration(300)
-			// 		.style("opacity",0.9)
-			// 		.attr("height",function (d,i,j) { return 40;});
-
 
 			var majorSAT = [];
 			var majorGPA = [];
@@ -660,33 +640,6 @@ function mouseoverOccupation(){
 		
 		name = occupation_character_requirement[i].occupation;
 		description = occupation_character_requirement[i].description;
-
-		/*
-        occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-            .style("left", (d3.event.pageX+20) + "px")		
-            .style("top", (d3.event.pageY + 10) + "px");
-
-		occupationDescription.transition()		
-            .duration(200)		
-            .style("opacity", .9);	
-	    */
-		// var occupationVQRHighlightBar=svg.selectAll(".occupationVQRHighlightBar")
-  //           .data(occupatioinVQRBuff)
-  //           .enter().append("g")
-  //           .attr("class","occupationVQRHighlightBar");
-
-  //           occupationVQRHighlightBar.append("rect") 
-  //               .attr("x",function (d,i,j) { return 943+ d*172 - 3; })
-  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-  //               .attr("height",function (d,i,j) { return 0;})
-  //               .attr("width",6)
-  //               .style("opacity",0)
-  //               .style("fill", "#EF2512");
-
-  //           occupationVQRHighlightBar.selectAll("rect").transition().duration(300)
-		// 		.style("opacity",0.9)
-		// 		.attr("height",function (d,i,j) { return 40;});
-
 
 			var occupationSalary=[];
 			var occupationSalary10=0;
@@ -773,27 +726,6 @@ function clickOnMajor(){
 	                .style("opacity", .9);	
 			    
 				d3.selectAll(".majorVQRHighlightBar0").remove();
-				// majorVQRHighlightBar0=svg.selectAll(".majorVQRHighlightBar0")
-		  //           .data(majorVQRBuff)
-		  //           .enter().append("g")
-		  //           .attr("class","majorVQRHighlightBar0");
-
-		  //           majorVQRHighlightBar0.append("rect") 
-		  //               .attr("x",function (d,i,j) { return 93-160+ d*172 - 3; })
-		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-		  //               .attr("height",function (d,i,j) { return 0;})
-		  //               .attr("width",6)
-		  //               .style("fill-opacity",0.9)
-		  //               .style("fill", function(){
-				// 			if(markOrder==0)
-				// 				return "#FA8072";
-				// 			if(markOrder==1)
-				// 				return "#82CAFA";
-				// 		});
-
-		  //           majorVQRHighlightBar0.selectAll("rect").transition().duration(300)
-				// 		.style("opacity",0.9)
-				// 		.attr("height",function (d,i,j) { return 40;});
 
 
 				var majorSAT = [];
@@ -863,27 +795,6 @@ function clickOnMajor(){
 	                .duration(200)		
 	                .style("opacity", .9);	
 			    d3.selectAll(".majorVQRHighlightBar1").remove();
-				// majorVQRHighlightBar1=svg.selectAll(".majorVQRHighlightBar1")
-		  //           .data(majorVQRBuff)
-		  //           .enter().append("g")
-		  //           .attr("class","majorVQRHighlightBar1");
-
-		  //           majorVQRHighlightBar1.append("rect") 
-		  //               .attr("x",function (d,i,j) { return 93-160+ d*172 - 3; })
-		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-		  //               .attr("height",function (d,i,j) { return 0;})
-		  //               .attr("width",6)
-		  //               .style("fill-opacity",0.9)
-		  //               .style("fill", function(){
-				// 			if(markOrder==0)
-				// 				return "#FA8072";
-				// 			if(markOrder==1)
-				// 				return "#82CAFA";
-				// 		});
-
-		  //           majorVQRHighlightBar1.selectAll("rect").transition().duration(300)
-				// 		.style("opacity",0.9)
-				// 		.attr("height",function (d,i,j) { return 40;});
 				}
 		    }
 		}
@@ -1219,6 +1130,7 @@ function majorCharacterChange(ID){
 
 function occupationCharacterChange(ID){
 
+
 	var occupationVQRBuff=[];
 	var occupationSalary=[];
 
@@ -1273,7 +1185,7 @@ function occupationCharacterChange(ID){
 		occupationSalary75=parseInt(occupationSalary75/occupationLength);
 		occupationSalary90=parseInt(occupationSalary90/occupationLength);
 		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-
+		console.log(occupationSalary)
 	}
 
 /*
@@ -1306,7 +1218,7 @@ function occupationCharacterChange(ID){
 		.attr("height",function (d,i,j) { return 40;});*/
 
 	occupationSalarybar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return OSalary_relevantX + 33+ 1010+(occupationSalary[i]-10000)*0.0023;})
+		.attr("x",function(d,i){return OSalary_relevantX + 33+(occupationSalary[i]-10000)*0.0023;})
 		.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
 };
 
@@ -3462,8 +3374,6 @@ function searchFunction() {
 					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],620,
 					    college.style);
 
-			
-
 		}
 	}
 	hr.send("major="+majorName+"&occupation="+occupationName);	
@@ -3478,8 +3388,11 @@ function search_major_bar(major,startpoint){
 	collegeMainbar.select("rect").transition().duration(500)
 		.attr("width",0);
 
-		collegeMainbar.select("text").transition().duration(500)
-		.style("visibility", "hidden");
+	collegeMainbar.select("text").transition().duration(500)
+	.style("visibility", "hidden");
+
+	current = "searchMajor";
+	changeScatterplot(major.name);
 
 	minn=5;
 
@@ -3525,8 +3438,6 @@ function search_major_bar(major,startpoint){
         .attr("fill", colors[0])
         .on("click", clickOnCollegeMainbar);
 */
-
-
 	var collegeSubbar=svg.selectAll(".collegeSubbar")
             .data(major.number)
             .enter().append("g")
@@ -3549,6 +3460,9 @@ function search_major_bar(major,startpoint){
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".majorVQRHighlightBar").remove();
+	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/','/g,'')+"]")
+					.attr("stroke-width",1)
+					.attr("stroke", "black");
 	        });
 
         var majorPercentage = calculatePercentage(major.number);
@@ -3570,6 +3484,11 @@ function search_major_bar(major,startpoint){
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".majorVQRHighlightBar").remove();
+
+	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/','/g,'')+"]")
+					.attr("stroke-width",1)
+					.attr("stroke", "black");
+
 	        });
         current = "major";
         var majorColor = calculateVQRcolor(major.name);
@@ -3609,6 +3528,9 @@ function search_occupation_bar(occupation,startpoint){
 	occupationMainbar.select("text").transition().duration(500)
 		.style("visibility", "hidden");
 
+	current = "searchOccupation";
+	changeScatterplot(occupation.name);
+
 	d3.selectAll(".occupationSubbar").remove();
 	minn = 5;
 	occupationX[0]=startpoint + 7;//leftover
@@ -3641,6 +3563,10 @@ function search_occupation_bar(occupation,startpoint){
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
+
+	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]")
+					.attr("stroke-width",1)
+					.attr("stroke", "black");
 	        });
 	
 	var occupationPercentage = calculatePercentage(occupation.number);
@@ -3663,6 +3589,9 @@ function search_occupation_bar(occupation,startpoint){
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
+	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]")
+					.attr("stroke-width",1)
+					.attr("stroke", "black");
 	        });
         
         current = "occupation";
@@ -3709,18 +3638,41 @@ function calculateParentClass(subclassOrder, subclassX, subclassWidth){
 };
 
 function changeScatterplot(ID){
-	ID=ID.replace(/\s/g,'').replace(/\//g,'');
 	if(current == "college"){
+		ID=ID.replace(/\s/g,'').replace(/\//g,'');
 		d3.selectAll(".majorDot").style("fill-opacity",0.1).attr("stroke-width",0);
-			d3.select("#majorScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(200).style("fill-opacity",1)
+			d3.select("#majorScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");
 	}
 	if(current == "occupationGroup"){
+		ID=ID.replace(/\s/g,'').replace(/\//g,'');
 		d3.selectAll(".occupationDot").style("fill-opacity",0.1).attr("stroke-width",0);
-	d3.select("#occupationScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(200).style("fill-opacity",1)
+	d3.select("#occupationScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");	
+	}
+	if(current == "searchMajor"){
+		d3.selectAll(".majorDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		for (var i = 0; i < ID.length; i++) {
+			console.log(ID)
+			d3.select("#majorScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
+				.style("fill-opacity",1)
+				.attr("stroke-width",1)
+				.attr("stroke", "black");
+		}
+		current = '';
+	}
+	if(current == "searchOccupation"){
+		d3.selectAll(".occupationDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		for (var i = 0; i < ID.length; i++) {
+			console.log(ID)
+			d3.select("#occupationScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
+				.style("fill-opacity",1)
+				.attr("stroke-width",1)
+				.attr("stroke", "black");
+		}
+		current = '';
 	}
 };
 
@@ -3850,25 +3802,25 @@ function createScatterplot(scatter,character,ifmajor){
 
 
 
-	function showResult(str) {
-	  if (str.length==0) { 
-	    document.getElementById("livesearch").innerHTML="";
-	    document.getElementById("livesearch").style.border="0px";
-	    return;
-	  }
-	  if (window.XMLHttpRequest) {
-	    // code for IE7+, Firefox, Chrome, Opera, Safari
-	    xmlhttp=new XMLHttpRequest();
-	  } else {  // code for IE6, IE5
-	    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-	  xmlhttp.onreadystatechange=function() {
-	    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-	      document.getElementById("livesearch").innerHTML=xmlhttp.responseText;
-	      document.getElementById("livesearch").style.border="1px solid #A5ACB2";
-	  	document.getElementById("livesearch").text="Enter";
-	    }
-	  }
-	  xmlhttp.open("GET","livesearch.php?q="+str,true);
-	  xmlhttp.send();
-	};
+function showResult(str) {
+  if (str.length==0) { 
+    document.getElementById("livesearch").innerHTML="";
+    document.getElementById("livesearch").style.border="0px";
+    return;
+  }
+  if (window.XMLHttpRequest) {
+    // code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+  } else {  // code for IE6, IE5
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  xmlhttp.onreadystatechange=function() {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+      document.getElementById("livesearch").innerHTML=xmlhttp.responseText;
+      document.getElementById("livesearch").style.border="1px solid #A5ACB2";
+  	document.getElementById("livesearch").text="Enter";
+    }
+  }
+  xmlhttp.open("GET","livesearch.php?q="+str,true);
+  xmlhttp.send();
+};

@@ -1135,7 +1135,7 @@ while($rows = mysqli_fetch_assoc($result))
       */
   
 
-/*
+
   var majorVQR=[];
   for (var i = 0; i < major_character_requirement.length; i++) {
     majorVQR.push([major_character_requirement[i].verbalSkill,major_character_requirement[i].quantitativeSkill,major_character_requirement[i].reasoningSkill]);
@@ -1145,6 +1145,7 @@ while($rows = mysqli_fetch_assoc($result))
     occupationVQR.push([occupation_character_requirement[i].verbalSkill,occupation_character_requirement[i].quantitativeSkill,occupation_character_requirement[i].reasoningSkill]);
   };
 
+/*
   var majorVQRBar=svg.selectAll(".majorVQRBar")
                 .data(majorVQR)
                 .enter().append("g")
