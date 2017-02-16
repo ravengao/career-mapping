@@ -4,4 +4,4 @@ This is a hierarchical interactive visualization system with specific properties
 
 Working demo: https://va.tech.purdue.edu/lilly/career_mapping.php
 
-![alt tag](https://github.com/veslyn/career-mapping/blob/master/career_mapping.png)
+![alt tag](https://github.com/veslyn/career-mapping/blob/master/career-mapping/career_mapping.png)
