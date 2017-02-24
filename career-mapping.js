@@ -1,8 +1,136 @@
+function ClickAccordion(index)
+{
+  var main_accordion_bar_id = "accordion_bar_" + index;
+  var main_accordion_panel_id = "accordion_panel_" + index;
+  var bar = document.getElementById(main_accordion_bar_id);
+  var panel = document.getElementById(main_accordion_panel_id);
+  var accordion_bar_id;
+  var accordion_name_id;
+  var accordion_panel_id;
+  var bar_y;
+  var text_y;
+  var panel_y;
+
+ // console.log(d3.selectAll(zzchart[2]).select("rect").attr("y"));
+ // console.log(d3.selectAll(zzchart[2]).select("rect").attr("height"));
+ if ($(bar).hasClass("active"))
+  {
+    if( chart_class_name[index] != "")
+    {
+      d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","hidden");
+    }
+
+    if( chart_img_id[index] != "")
+    {
+      d3.selectAll(chart_class_name[index]).select("image").attr("visibility","hidden");
+    }
+    if( chart_subclass_name[index] != "")
+    {
+      d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","hidden");
+      d3.selectAll(chart_class_name[index]).select("text").attr("visibility","hidden");
+    } 
+  }
+  else
+  {
+    if( chart_class_name[index] != "")
+    {
+      d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","visible");
+    }
+
+    if( chart_img_id[index] != "")
+    {
+      d3.selectAll(chart_class_name[index]).select("image").attr("visibility","visible");
+    }
+    if(chart_subclass_name[index] != "")
+    {
+      d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","visible");
+      d3.selectAll(chart_class_name[index]).select("text").attr("visibility","visible");
+    }
+    
+  }
+  for(var i = index + 1; i < 20; i++)
+  {
+    if(index < 10 && i >= 10)
+      break;
+    accordion_bar_id = "rect[id=accordion_bar_"+i+"]";
+    accordion_name_id = "text[id=accordion_name_"+i+"]";
+    accordion_panel_id = "rect[id=accordion_panel_"+i+"]";
+    bar_y = Number(d3.selectAll(accordion_bar_id ).attr("y"));
+    name_y = Number(d3.selectAll(accordion_name_id).attr("y"));
+    panel_y = Number(d3.selectAll(accordion_panel_id).attr("y"));
+    if ($(bar).hasClass("active"))
+    {
+      d3.select(accordion_bar_id).attr("y", function(d, i){ return bar_y - accordion_panel_height; });
+      d3.select(accordion_name_id).attr("y", function(d, i){ return name_y - accordion_panel_height; });
+      d3.select(accordion_panel_id).attr("y", function(d, i){ return panel_y - accordion_panel_height; });
+
+
+        chart_y[i]-=accordion_panel_height;
+        if( chart_img_id[i] != "")
+        {
+          d3.selectAll(chart_class_name[i]).select("image").attr("transform","translate(0,"+chart_y[i]+")");
+        }
+        // console.log(chart_y[i]);
+        if(chart_class_name[i] != "")
+          d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
+
+        if(chart_subclass_name[i] != "")
+        {
+          chart_sub_y[i]-=accordion_panel_height;
+          // console.log(chart_sub_y[i]);
+          d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
+          chart_text_y[i]-=accordion_panel_height;
+          // console.log(chart_text_y[i]);
+          d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
+        }
+        else
+        {
+
+        }
+      
+    }
+    else
+    {
+      d3.select(accordion_bar_id).attr("y", function(d, i){ return bar_y + accordion_panel_height; });
+      d3.select(accordion_name_id).attr("y", function(d, i){ return name_y + accordion_panel_height; });
+      d3.select(accordion_panel_id).attr("y", function(d, i){ return panel_y + accordion_panel_height; });
+     
+    
+        chart_y[i]+=accordion_panel_height;
+        if( chart_img_id[i] != "")
+        {
+          d3.selectAll(chart_class_name[i]).select("image").attr("transform","translate(0,"+chart_y[i]+")");
+        }
+        // console.log(chart_y[i]);
+        if(chart_class_name[i] != "")
+          d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
+
+        if(chart_subclass_name[i] != "")
+        {
+          chart_sub_y[i]+=accordion_panel_height;
+          // console.log(chart_sub_y[i]);
+          d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
+          chart_text_y[i]+=accordion_panel_height;
+          // console.log(chart_text_y[i]);
+          d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
+        }
+        else
+        {
+
+        }
+    }
+  } 
+
+  bar.classList.toggle("active");
+  panel.classList.toggle("show");
+}
+
 function collapseToMainbar(){
 	collapseButton.select(".noresult").remove();
 	current = '';
-
 	if (this.id == 'college' && college.click!='?'){
+		collegeName.selectAll("text").remove();
+		collegeName.selectAll("rect").remove();
 		d3.selectAll(".majorDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
 		d3.selectAll(".collegeCollapseButton").attr("visibility","hidden");
 
@@ -51,8 +179,10 @@ function collapseToMainbar(){
 
 	
 	if (this.id == 'occupationGroup' && occupationGroup.click!='?'){
-	d3.selectAll(".occupationDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
-	d3.selectAll(".occupationCollapseButton").attr("visibility","hidden");
+			occupationName.selectAll("text").remove();
+		occupationName.selectAll("rect").remove();
+		d3.selectAll(".occupationDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
+		d3.selectAll(".occupationCollapseButton").attr("visibility","hidden");
 		d3.selectAll(".occupationSubbar").remove();
 		minn=10;
 		ogscale=(620-minn*occupationGroup.name.length -(occupationGroup.name.length-1)*gap)/math.sum(occupationGroup.number);
@@ -200,6 +330,7 @@ function initX(arr, arrX, arrWidth,scale){
 };
 var colExpandPoint=0;
 var occExpandPoint=0;
+
 function clickOnCollegeMainbar(d,i) {
 	d3.selectAll(".collegeCollapseButton").attr("visibility","visible");
 	colExpandPoint = collegeX[i];
@@ -268,8 +399,43 @@ function clickOnCollegeMainbar(d,i) {
 	//major of the college
 	majorCharacterChange(this.id);
 
+	//create college names and collapse space
+	words = (this.id).split(/\s+/);
+
+	collegeName.selectAll("text").remove();
+	collegeName.selectAll("rect").remove();
+
+	collegeName.append("rect")
+		.attr("id","college")
+		.attr("width", 290)
+		.attr("height", function (d) {return 470;})
+		.attr("x", relevantX - 300)
+		.attr("y", function(d,i){
+			return startpoint;//+200
+		})
+		.style("fill","#eeeeee")
+		.style("fill-opacity",0.01)
+		.on("click",
+			collapseToMainbar);
+
+	collegeName.selectAll(".collegeName").data(words).enter()
+		.append('text')
+        .text(function(d,i){
+        	//console.log(d)
+        	return words[i];})
+        .style("fill","#cccccc")
+		.style("fill-opacity",0.1)
+		.style("font-family","Impact, Charcoal, sans-serif")
+		.attr("font-size",60)
+		.attr("x", relevantX - 300)
+		.attr("y", function(d,i){
+			return startpoint+100+60*i;//+200
+		}).transition().duration(animationTime);
+
 
 };
+
+
 
 function clickOnOccupationMainbar(d,i){
 	d3.selectAll(".occupationCollapseButton").attr("visibility","visible");
@@ -333,11 +499,45 @@ function clickOnOccupationMainbar(d,i){
 	d3.selectAll(".mainPath").transition().duration(animationTime)
 		.style("opacity",0);
 
-
 	occupationCharacterChange(this.id);
+
+	//create occu names and collapse space
+	words = (this.id).split(/\s+/);
+
+	occupationName.selectAll("text").remove();
+	occupationName.selectAll("rect").remove();
+
+	occupationName.append("rect")
+		.attr("id","occupationGroup")
+		.attr("width", 290)
+		.attr("height", function (d) {return 470;})
+		.attr("x", relevantX + 330)
+		.attr("y", function(d,i){
+			return startpoint;//+200
+		})
+		.style("fill","#eeeeee")
+		.style("fill-opacity",0.01)
+		.on("click",
+			collapseToMainbar);
+
+	occupationName.selectAll(".occupationName").data(words).enter()
+		.append('text')
+        .text(function(d,i){
+        	//console.log(d)
+        	return words[i];})
+        .style("fill","#cccccc")
+		.style("fill-opacity",0.1)
+		.style("font-family","Impact, Charcoal, sans-serif")
+		.attr("font-size",60)
+		/*.attr("x", relevantX + 330)
+		.attr("y", function(d,i){
+			return startpoint+100+60*i;//+200
+		})*/
+		.attr("transform",function(d,i){
+			return "translate("+ (relevantX + 350)+","+(startpoint+100+60*i)+") "
+		})//"rotate("+(relevantX + 330)+","+(startpoint+100)+",90)")
+		.transition().duration(animationTime);
 };
-
-
 
 
 var majorDescription = d3.select("body").append("div")	
@@ -382,7 +582,7 @@ function create_major_bar(major,startpoint,style,subbarColor){
   			})//change bar color working
 			.attr("stroke", "black")
             .attr("fill-opacity",0)
-            .on("mousemove", mouseoverMajor)
+            .on("mouseover", mouseoverMajor)
             .on("click",clickOnMajor)
             .on("mouseout", function(d) {
             	majorDescription.transition()		
@@ -411,7 +611,8 @@ function create_major_bar(major,startpoint,style,subbarColor){
             .attr("text-anchor", "end")
             .style("font-size", 13)
             .style("fill","white")
-            .on("mousemove", mouseoverMajor)
+            .on("click",clickOnMajor)
+            .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {	
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);	
 	            majorDescription.transition()		
@@ -475,7 +676,7 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
   				//return colors[i]; 
   			})//change bar color working
             .attr("fill-opacity",0)
-            .on("mousemove", mouseoverOccupation)
+            .on("mouseover", mouseoverOccupation)
             .on("click",clickOnOccupation)
             .on("mouseout", function(d) {	
             		
@@ -505,7 +706,7 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
             .style("fill","white")
             .on("click",clickOnOccupation)
 
-            .on("mousemove", mouseoverOccupation)
+            .on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {	
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);	
 	            occupationDescription.transition()		
@@ -538,6 +739,7 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 };
 
 function mouseoverMajor(){
+	d3.select(this).style("cursor", "pointer");
 	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
 	d3.selectAll(".mainPath").style("fill-opacity",0.4);
 	//d3.selectAll("polygon#"+pathID).style("fill-opacity",0.9);
@@ -626,6 +828,7 @@ function mouseoverMajor(){
 };
 
 function mouseoverOccupation(){
+	d3.select(this).style("cursor", "pointer");
 	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
 	d3.selectAll(".mainPath").style("fill-opacity",0.4);
 	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",1);
@@ -669,6 +872,17 @@ var markOrder = 0;
 var markList = [0,0];
 var majorVQRHighlightBar0, majorVQRHighlightBar1;
 function clickOnMajor(){
+	d3.selectAll(".collegeSubbar").select("rect").transition().duration(500)					
+		.attr("stroke-width", 0.5)
+		.attr("stroke","black");
+	var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.1);
+	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
+	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+		.attr("stroke-width", 4)
+		.attr("stroke","red");
+
+	/*
 	if (markOrder>1)
 		markOrder=0;
 	if(markOrder<2){
@@ -799,7 +1013,7 @@ function clickOnMajor(){
 		    }
 		}
 		markOrder++;
-}
+}*/
 
 };
 
@@ -807,6 +1021,16 @@ var omarkOrder = 0;
 var omarkList = [0,0];
 var occupationVQRHighlightBar0, occupationVQRHighlightBar1;
 function clickOnOccupation(){
+	d3.selectAll(".occupationSubbar").select("rect").transition().duration(500)					
+		.attr("stroke-width", 0.5)
+		.attr("stroke","black");
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.1);
+	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
+	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+		.attr("stroke-width", 4)
+		.attr("stroke","red");
+	/*
 	if (omarkOrder>1)
 		omarkOrder=0;
 	if(omarkOrder<2){
@@ -942,7 +1166,7 @@ function clickOnOccupation(){
 		}
 		omarkOrder++;
 	}
-
+*/
 };
 
 
@@ -1528,6 +1752,7 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 				    .attr("textnum",function(d){
 				    	return left_right_num;
 				    })
+				    /*
 				    .on("mouseover", function(d) {
 			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
 			            d3.select(this).style("fill-opacity",0.9);
@@ -1556,7 +1781,7 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 			            mainPath.selectAll("text").remove();
 			            mainPath.selectAll("circle").remove();
 			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
-			        })
+			        })*/
 				    .style("fill-opacity",0)
 				    .attr("class","mainPath");
 
@@ -3453,7 +3678,7 @@ function search_major_bar(major,startpoint){
             .attr("width",25)
             .attr("id",function (d,i) {return major.name[i];})
             .attr("fill-opacity",0)
-            .on("mousemove", mouseoverMajor)
+            .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);		
 	            majorDescription.transition()		
@@ -3477,7 +3702,7 @@ function search_major_bar(major,startpoint){
             .attr("dy", ".35em")
             .attr("text-anchor", "end")
             .style("font-size", 12)
-            .on("mousemove", mouseoverMajor)
+            .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {	
             //d3.selectAll(".mainPath").style("fill-opacity",0.9);	
 	            majorDescription.transition()		
@@ -3556,7 +3781,7 @@ function search_occupation_bar(occupation,startpoint){
             .attr("width",25)
             .attr("id",function (d,i) {return occupation.name[i];})
             .attr("fill-opacity",0)
-			.on("mousemove", mouseoverOccupation)
+			.on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {		
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);
 	            occupationDescription.transition()		
@@ -3582,7 +3807,7 @@ function search_occupation_bar(occupation,startpoint){
             .attr("text-anchor", "start")
             //.attr("transform", "translate(0,500) rotate(-80)")
             .style("font-size", 12)
-            .on("mousemove", mouseoverOccupation)
+            .on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {		
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);
 	            occupationDescription.transition()		
@@ -3640,20 +3865,20 @@ function calculateParentClass(subclassOrder, subclassX, subclassWidth){
 function changeScatterplot(ID){
 	if(current == "college"){
 		ID=ID.replace(/\s/g,'').replace(/\//g,'');
-		d3.selectAll(".majorDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		d3.selectAll(".majorDot").style("fill-opacity",0.2).attr("stroke-width",0);
 			d3.select("#majorScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");
 	}
 	if(current == "occupationGroup"){
 		ID=ID.replace(/\s/g,'').replace(/\//g,'');
-		d3.selectAll(".occupationDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").style("fill-opacity",0.3).attr("stroke-width",0);
 	d3.select("#occupationScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");	
 	}
 	if(current == "searchMajor"){
-		d3.selectAll(".majorDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		d3.selectAll(".majorDot").style("fill-opacity",0.3).attr("stroke-width",0);
 		for (var i = 0; i < ID.length; i++) {
 			console.log(ID)
 			d3.select("#majorScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
@@ -3664,7 +3889,7 @@ function changeScatterplot(ID){
 		current = '';
 	}
 	if(current == "searchOccupation"){
-		d3.selectAll(".occupationDot").style("fill-opacity",0.1).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").style("fill-opacity",0.3).attr("stroke-width",0);
 		for (var i = 0; i < ID.length; i++) {
 			console.log(ID)
 			d3.select("#occupationScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
@@ -3752,7 +3977,7 @@ function createScatterplot(scatter,character,ifmajor){
   		    vScore=d.verbalSkill;
     		qScore=d.quantitativeSkill;
     		eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-    		BrightScale=d3.scaleLinear().range(["#ffffff",colorScale((qScore-vScore)*8)]).domain([0,1.5]);
+    		BrightScale=d3.scaleLinear().range(["#eeeeee",colorScale((qScore-vScore)*8)]).domain([0,1.5]);
     		return BrightScale(eucliDis);
 
 

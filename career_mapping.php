@@ -96,14 +96,14 @@
         var accordion_bar_xr = 1180;
         var accordion_bar_y = 320;
         var accordion_bar_width = 300;
-        var accordion_bar_height = 35;
+        var accordion_bar_height = 30;
         var accordion_panel_xl = 0;
         var accordion_panel_xr = 1180;
         var accordion_panel_y = accordion_bar_y + accordion_bar_height;
         var accordion_panel_width = 300;
-        var accordion_panel_height = 180;
+        var accordion_panel_height = 130;//180
         var chart_base_x=1050;
-        var chart_base_y=accordion_bar_y + 80;
+        var chart_base_y=accordion_bar_y + 30;//80
         var svg = d3.select("#mySVG").append("g");
 
         var accordion_array = d3.range(20);
@@ -117,7 +117,7 @@
                       .attr("class", "accordion_bar")
                       .attr("id", function(d, i){ return "accordion_bar_" + i; })
                       .attr("x", function(d, i){ if(i < 10) return accordion_bar_xl; else return accordion_bar_xr;})
-                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_bar_y + 40 * i; })
+                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_bar_y + (accordion_bar_height+5) * i; })
                       .attr("width", accordion_bar_width)
                       .attr("height", accordion_bar_height)
                       .on("click", function(d, i){ return ClickAccordion(i); });
@@ -127,143 +127,17 @@
                       .attr("id", function(d, i){ return "accordion_name_" + i; })
                       .text(function(d, i){ return "accordion_name_" + i; }) // Will change to real name 
                       .attr("x", function(d, i){ if(i < 10) return accordion_bar_xl + 5; else return accordion_bar_xr + 5; })
-                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_bar_y + 40 * i + 25; })
+                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_bar_y + (accordion_bar_height+5) * i + 25; })
                       .on("click", function(d, i){ return ClickAccordion(i); });
 
         accordion_unit.append("rect")
                       .attr("class", "accordion_panel")
                       .attr("id", function(d, i){ return "accordion_panel_"+ i; })
                       .attr("x", function(d, i){ if(i < 10) return accordion_panel_xl; else return accordion_panel_xr;})
-                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_panel_y + 40 * i;})
+                      .attr("y", function(d, i){ if(i > 9) i-=10; return accordion_panel_y + (accordion_bar_height + 5) * i;})
                       .attr("width", accordion_panel_width)
                       .attr("height", accordion_panel_height);
 
-        function ClickAccordion(index)
-        {
-          var main_accordion_bar_id = "accordion_bar_" + index;
-          var main_accordion_panel_id = "accordion_panel_" + index;
-          var bar = document.getElementById(main_accordion_bar_id);
-          var panel = document.getElementById(main_accordion_panel_id);
-          var accordion_bar_id;
-          var accordion_name_id;
-          var accordion_panel_id;
-          var bar_y;
-          var text_y;
-          var panel_y;
-
-         // console.log(d3.selectAll(zzchart[2]).select("rect").attr("y"));
-         // console.log(d3.selectAll(zzchart[2]).select("rect").attr("height"));
-         if ($(bar).hasClass("active"))
-          {
-            if( chart_class_name[index] != "")
-            {
-              d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","hidden");
-            }
-
-            if( chart_img_id[index] != "")
-            {
-              d3.selectAll(chart_class_name[index]).select("image").attr("visibility","hidden");
-            }
-            if( chart_subclass_name[index] != "")
-            {
-              d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","hidden");
-              d3.selectAll(chart_class_name[index]).select("text").attr("visibility","hidden");
-            } 
-          }
-          else
-          {
-            if( chart_class_name[index] != "")
-            {
-              d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","visible");
-            }
-
-            if( chart_img_id[index] != "")
-            {
-              d3.selectAll(chart_class_name[index]).select("image").attr("visibility","visible");
-            }
-            if(chart_subclass_name[index] != "")
-            {
-              d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","visible");
-              d3.selectAll(chart_class_name[index]).select("text").attr("visibility","visible");
-            }
-            
-          }
-          for(var i = index + 1; i < 20; i++)
-          {
-            if(index < 10 && i >= 10)
-              break;
-            accordion_bar_id = "rect[id=accordion_bar_"+i+"]";
-            accordion_name_id = "text[id=accordion_name_"+i+"]";
-            accordion_panel_id = "rect[id=accordion_panel_"+i+"]";
-            bar_y = Number(d3.selectAll(accordion_bar_id ).attr("y"));
-            name_y = Number(d3.selectAll(accordion_name_id).attr("y"));
-            panel_y = Number(d3.selectAll(accordion_panel_id).attr("y"));
-            if ($(bar).hasClass("active"))
-            {
-              d3.select(accordion_bar_id).attr("y", function(d, i){ return bar_y - 180; });
-              d3.select(accordion_name_id).attr("y", function(d, i){ return name_y - 180; });
-              d3.select(accordion_panel_id).attr("y", function(d, i){ return panel_y - 180; });
-      
-
-                chart_y[i]-=180;
-                if( chart_img_id[i] != "")
-                {
-                  d3.selectAll(chart_class_name[i]).select("image").attr("transform","translate(0,"+chart_y[i]+")");
-                }
-                // console.log(chart_y[i]);
-                if(chart_class_name[i] != "")
-                  d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
-
-                if(chart_subclass_name[i] != "")
-                {
-                  chart_sub_y[i]-=180;
-                  // console.log(chart_sub_y[i]);
-                  d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
-                  chart_text_y[i]-=180;
-                  // console.log(chart_text_y[i]);
-                  d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
-                }
-                else
-                {
-
-                }
-              
-            }
-            else
-            {
-              d3.select(accordion_bar_id).attr("y", function(d, i){ return bar_y + 180; });
-              d3.select(accordion_name_id).attr("y", function(d, i){ return name_y + 180; });
-              d3.select(accordion_panel_id).attr("y", function(d, i){ return panel_y + 180; });
-             
-            
-                chart_y[i]+=180;
-                if( chart_img_id[i] != "")
-                {
-                  d3.selectAll(chart_class_name[i]).select("image").attr("transform","translate(0,"+chart_y[i]+")");
-                }
-                // console.log(chart_y[i]);
-                if(chart_class_name[i] != "")
-                  d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
-
-                if(chart_subclass_name[i] != "")
-                {
-                  chart_sub_y[i]+=180;
-                  // console.log(chart_sub_y[i]);
-                  d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
-                  chart_text_y[i]+=180;
-                  // console.log(chart_text_y[i]);
-                  d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
-                }
-                else
-                {
-
-                }
-            }
-          } 
-
-          bar.classList.toggle("active");
-          panel.classList.toggle("show");
-        }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   var num = 50; //number of pixels before modifying styles
@@ -1432,7 +1306,7 @@ while($rows = mysqli_fetch_assoc($result))
 
 //Occupation Salary
   var OSalary_relevantX = accordion_bar_xr - 130;
-  var OSalary_relevantY = accordion_bar_y + 23;
+  var OSalary_relevantY = accordion_bar_y ;//+23
 
   var occupationSalarybar=svg.selectAll(".occupationSalarybar")
         .data(barRange)
@@ -1601,8 +1475,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationglobalization.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+40*1-40;
-            return chart_base_y+40*1-40 - (d * 0.5);
+          if(d<0) return chart_base_y+(accordion_bar_height+5)*1-40;
+            return chart_base_y+(accordion_bar_height+5)*1-40 - (d * 0.5);
          })
          .attr("width", w / occupationglobalization.number.length - 1)
          .attr("height", function(d) {
@@ -1624,7 +1498,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation Globalization Sensitivity")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x-10)
-         .attr("y", chart_base_y+1*40+30)
+         .attr("y", chart_base_y+1*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1650,7 +1524,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
 
-            return chart_base_y+40*1-40 ;
+            return chart_base_y+(accordion_bar_height+5)*1-40 ;
             })
          .attr("height", function(d) {
             
@@ -1689,8 +1563,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationmarried.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+40*2;
-            return chart_base_y+40*2 - (d * 0.5);
+          if(d<0) return chart_base_y+(accordion_bar_height+5)*2;
+            return chart_base_y+(accordion_bar_height+5)*2 - (d * 0.5);
          })
          .attr("width", w / occupationmarried.number.length - 1)
          .attr("height", function(d) {
@@ -1711,7 +1585,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation marriedPercentAge30to50")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+2*40+30)
+         .attr("y", chart_base_y+2*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1731,8 +1605,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / married.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+40*2;
-            return chart_base_y+40*2 - (d * 0);
+          if(d<0) return chart_base_y+(accordion_bar_height+5)*2;
+            return chart_base_y+(accordion_bar_height+5)*2 - (d * 0);
             })
          .attr("height", function(d) {
             if(d<0) return d * (-0);
@@ -1770,8 +1644,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationblackPercent.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+40*3;
-            return chart_base_y+40*3 - (d * 2);
+          if(d<0) return chart_base_y+(accordion_bar_height+5)*3;
+            return chart_base_y+(accordion_bar_height+5)*3 - (d * 2);
          })
          .attr("width", w / occupationblackPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1793,7 +1667,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationblackPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+3*40+30)
+         .attr("y", chart_base_y+3*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1811,8 +1685,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / blackPercent.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+40*3;
-            return chart_base_y+40*3 - (d * 0);
+          if(d<0) return chart_base_y+(accordion_bar_height+5)*3;
+            return chart_base_y+(accordion_bar_height+5)*3 - (d * 0);
          })
          .attr("width", w / blackPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1853,7 +1727,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*4 - (d * 2);
+            return chart_base_y+(accordion_bar_height+5)*4 - (d * 2);
          })
          .attr("width", w / occupationasianPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1874,7 +1748,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationasianPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+4*40+30)
+         .attr("y", chart_base_y+4*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1893,7 +1767,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*4 - (d * 0);
+            return chart_base_y+(accordion_bar_height+5)*4 - (d * 0);
          })
          .attr("width", w / asianPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1933,7 +1807,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*5 - (d * 2);
+            return chart_base_y+(accordion_bar_height+5)*5 - (d * 2);
          })
          .attr("width", w / occupationhispanicPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1953,7 +1827,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationhispanicPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+5*40+30)
+         .attr("y", chart_base_y+5*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1972,7 +1846,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*5 - (d * 0);
+            return chart_base_y+(accordion_bar_height+5)*5 - (d * 0);
          })
          .attr("width", w / hispanicPercent.number.length - 1)
          .attr("height", function(d) {
@@ -2014,7 +1888,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*6 - (d * 0.5);
+            return chart_base_y+(accordion_bar_height+5)*6 - (d * 0.5);
          })
          .attr("width", w / occupationfemalePercent.number.length - 1)
          .attr("height", function(d) {
@@ -2034,7 +1908,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationfemalePercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+6*40+30)
+         .attr("y", chart_base_y+6*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -2053,7 +1927,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*6 - (d * 0);
+            return chart_base_y+(accordion_bar_height+5)*6 - (d * 0);
          })
          .attr("width", w / femalePercent.number.length - 1)
          .attr("height", function(d) {
@@ -2093,7 +1967,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*7 - (d * 2);
+            return chart_base_y+(accordion_bar_height+5)*7 - (d * 2);
          })
          .attr("width", w / occupationforeignBornPercent.number.length - 1)
          .attr("height", function(d) {
@@ -2113,7 +1987,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationforeignBornPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+7*40+30)
+         .attr("y", chart_base_y+7*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -2132,7 +2006,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*7 - (d * 0);
+            return chart_base_y+(accordion_bar_height+5)*7 - (d * 0);
          })
          .attr("width", w / foreignBornPercent.number.length - 1)
          .attr("height", function(d) {
@@ -2172,7 +2046,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*8 - (d * 1);
+            return chart_base_y+(accordion_bar_height+5)*8 - (d * 1);
          })
          .attr("width", w / occupationaverageHoursOfWorkOrWeek.number.length - 1)
          .attr("height", function(d) {
@@ -2192,7 +2066,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationaverageHoursOfWorkOrWeek")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+8*40+30)
+         .attr("y", chart_base_y+8*(accordion_bar_height+5)+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -2210,7 +2084,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+40*8 - (d * 0);
+            return chart_base_y+(accordion_bar_height+5)*8 - (d * 0);
          })
          .attr("width", w / averageHoursOfWorkOrWeek.number.length - 1)
          .attr("height", function(d) {
@@ -2277,11 +2151,12 @@ while($rows = mysqli_fetch_assoc($result))
         .on("click", clickOnCollegeMainbar)
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-      d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
+          d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
+          d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-      d3.selectAll("polygon").style("fill-opacity",0.4);
+          d3.selectAll("polygon").style("fill-opacity",0.4);
         });
 
 
@@ -2301,11 +2176,15 @@ while($rows = mysqli_fetch_assoc($result))
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
+      d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-      d3.selectAll("polygon").style("fill-opacity",0.4);
+          d3.selectAll("polygon").style("fill-opacity",0.4);
         });
+      
+      var collegeName = collegeMainbar.append("g")
+          .attr("class","collegeName");
 
 
     //create initial occupation bar
@@ -2330,7 +2209,8 @@ while($rows = mysqli_fetch_assoc($result))
         .on("click", clickOnOccupationMainbar)
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-      d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
+          d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
+          d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
@@ -2354,12 +2234,14 @@ while($rows = mysqli_fetch_assoc($result))
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
+      d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon").style("fill-opacity",0.4);
         });
-
+      var occupationName = occupationMainbar.append("g")
+          .attr("class","occupationName");
 
   //Collapse option icon
   var collapseButtonData=[0,1];
@@ -2379,7 +2261,8 @@ while($rows = mysqli_fetch_assoc($result))
     .attr('height', 30)
     .attr("xlink:href","image/up-arrow-circle-md.png")
     .attr("id",'college')
-    .on("click", collapseToMainbar);
+    .on("click", collapseToMainbar)
+    .on("mouseover",function(d){d3.select(this).style("cursor", "pointer");});
   collegeCollapseButton.append("text")
         .attr("class","collegeCollapseButton")
         .text("Back")
@@ -2402,7 +2285,8 @@ while($rows = mysqli_fetch_assoc($result))
     .attr('height', 30)
     .attr("xlink:href","image/up-arrow-circle-md.png")
     .attr("id",'occupationGroup')
-    .on("click", collapseToMainbar);
+    .on("click", collapseToMainbar)
+    .on("mouseover",function(d){d3.select(this).style("cursor", "pointer");});
   occupationCollapseButton.append("text")
         .attr("class","occupationCollapseButton")
         .text( "Back")
@@ -2418,12 +2302,21 @@ while($rows = mysqli_fetch_assoc($result))
 
   collapseButton.append("text")
         .text( function (d,i) {return i<1 ? "College":"Occupation";;})
-        .attr("x", function (d,i) {return i<1 ? relevantX-9:relevantX+270;})
+        .attr("x", function (d,i) {return i<1 ? relevantX-35:relevantX+250;})
         .attr("y", -40)
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
-        .style("font-size", 18)
-        .attr("fill", colors[0]);
+        .attr("font-family", "Impact, Charcoal, sans-serif")
+        .attr("font-weight", "bold")
+        .style("font-size", 30)//18
+        .attr("fill", "#444444");
+  collapseButton.append("svg:image")
+      .attr('x',relevantX+100)
+      .attr('y',-70)
+      .attr('width', 130)
+      .attr('height', 60)
+      .attr("xlink:href","image/arrow.png")
+      .style("opacity",0.2);
 
 
   find_college_occupationGroup();
