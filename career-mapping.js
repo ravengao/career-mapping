@@ -735,1223 +735,8 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
       		.style("fill", function(d) { 
       			return "black";//mainOccuBarColor=style.fill;return style.fill; 
       		})
-      		.duration(animationTime);           	
-};
-
-function mouseoverMajor(){
-	d3.select(this).style("cursor", "pointer");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
-	d3.selectAll(".mainPath").style("fill-opacity",0.4);
-	//d3.selectAll("polygon#"+pathID).style("fill-opacity",0.9);
-	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",1.0);//0.9
-	d3.select("#majorScatterplot").selectAll("circle[id="+pathID+"]").style("fill-opacity",1)
-		.attr("stroke-width",3)
-		.attr("stroke", "red");
-
-	for (var i = 0; i < major_character_requirement.length; i++) {
-	    //calculate average of college
-	    if(major_character_requirement[i].major == this.id){
-	    	var majorVQRBuff=[];
-	    	majorVQRBuff.push(major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill);
-
-			name = major_character_requirement[i].major;
-			description = major_character_requirement[i].description;
-
-
-            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-                .style("left", (d3.event.pageX-280) + "px")		
-                .style("top", (d3.event.pageY + 10) + "px");
-
-			majorDescription.transition()		
-                .duration(200)		
-                .style("opacity", .9);	
-
-			var majorSAT = [];
-			var majorGPA = [];
-			var majorSalary = [];
-
-			var majorSAT10=0;
-			var majorSAT25=0;
-			var majorSAT50=0;
-			var majorSAT75=0;
-			var majorSAT90=0;
-
-			var majorGPA10=0;
-			var majorGPA25=0;
-			var majorGPA50=0;
-			var majorGPA75=0;
-			var majorGPA90=0;
-
-			var majorSalary10=0;
-			var majorSalary25=0;
-			var majorSalary50=0;
-			var majorSalary75=0;
-			var majorSalary90=0;
-
-
-			majorSAT10=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);		    				
-			majorSAT25=major_character_requirement[i].SAT25;
-			majorSAT50=major_character_requirement[i].SAT50;
-			majorSAT75=major_character_requirement[i].SAT75;
-			majorSAT90=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
-
-			majorGPA10=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
-			majorGPA25=major_character_requirement[i].GPA25;
-			majorGPA50=major_character_requirement[i].GPA50;
-			majorGPA75=major_character_requirement[i].GPA75;
-			majorGPA90=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
-
-			majorSalary10=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
-			majorSalary25=major_character_requirement[i].salary25;
-			majorSalary50=major_character_requirement[i].salary50;
-			majorSalary75=major_character_requirement[i].salary75;
-			majorSalary90=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
-
-
-			majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
-			majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
-			majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
-
-			majorSATbar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-				.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
-
-			majorGPAbar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
-				.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
-
-			majorSalarybar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return MSalary_relevantX+33+ (majorSalary[i]-10000)*0.0023;})
-				.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
-	    }
-	}
-};
-
-function mouseoverOccupation(){
-	d3.select(this).style("cursor", "pointer");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
-	d3.selectAll(".mainPath").style("fill-opacity",0.4);
-	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",1);
-	d3.select("#occupationScatterplot").selectAll("circle[id="+pathID+"]").style("fill-opacity",1)
-		.attr("stroke-width",3)
-		.attr("stroke", "red");
-
-	for (var i = 0; i < occupation_character_requirement.length; i++) {
-	    if(occupation_character_requirement[i].occupation == this.id){
-	    	var occupatioinVQRBuff=[];
-	    	occupatioinVQRBuff.push(occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill);
-		
-		name = occupation_character_requirement[i].occupation;
-		description = occupation_character_requirement[i].description;
-
-			var occupationSalary=[];
-			var occupationSalary10=0;
-			var occupationSalary25=0;
-			var occupationSalary50=0;
-			var occupationSalary75=0;
-			var occupationSalary90=0;
-			var occupationLength=0;
-
-			occupationSalary10=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
-			occupationSalary25=occupation_character_requirement[i].salary25;
-			occupationSalary50=occupation_character_requirement[i].salary50;
-			occupationSalary75=occupation_character_requirement[i].salary75;
-			occupationSalary90=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
-
-			occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-
-			occupationSalarybar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return OSalary_relevantX+33+(occupationSalary[i]-10000)*0.0023;})
-				.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
-
-	    }
-	}
-};
-
-var markOrder = 0;
-var markList = [0,0];
-var majorVQRHighlightBar0, majorVQRHighlightBar1;
-function clickOnMajor(){
-	d3.selectAll(".collegeSubbar").select("rect").transition().duration(500)					
-		.attr("stroke-width", 0.5)
-		.attr("stroke","black");
-	var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-	d3.selectAll(".mainPath").style("fill-opacity",0.1);
-	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
-	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
-		.attr("stroke-width", 4)
-		.attr("stroke","red");
-
-	/*
-	if (markOrder>1)
-		markOrder=0;
-	if(markOrder<2){
-
-		var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-		d3.selectAll(".mainPath").style("fill-opacity",0.3);
-		d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
-		
-		//d3.selectAll("rect[markOrder=0]").style("fill-opacity",0.1);
-		d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
-			.attr("stroke-width", 4)
-			.attr("stroke", function(){
-				if(markOrder==0){
-					d3.selectAll(".collegeSubbar").selectAll("rect[cid=zero]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[0]).attr("cid","zero");
-					return "#FA8072";}	
-				if(markOrder==1){
-					d3.selectAll(".collegeSubbar").selectAll("rect[cid=one]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[0]).attr("cid","one");
-					return "#82CAFA";}
-			});
-			
-		d3.select(this.parentNode.childNodes[1]).transition().duration(500)
-			.style("fill", function(){
-				if(markOrder==0){
-					
-					d3.selectAll(".collegeSubbar").selectAll("text[cid=zero]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[1]).attr("cid","zero");
-					return "#FA8072";}	
-				if(markOrder==1){
-					d3.selectAll(".collegeSubbar").selectAll("text[cid=one]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[1]).attr("cid","one");
-					return "#82CAFA";}
-			});	
-
-		d3.selectAll(".collegeSubbar").selectAll("rect[cid=init]").attr("stroke-width", 0);
-		d3.selectAll(".collegeSubbar").selectAll("text[cid=init]").style("fill", mainCollBarColor);
-		
-		for (var i = 0; i < major_character_requirement.length; i++) {
-		    //calculate average of college
-		    if(major_character_requirement[i].major == this.id){
-		    	var majorVQRBuff=[];
-		    	majorVQRBuff.push(major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill);
-
-				name = major_character_requirement[i].major;
-				description = major_character_requirement[i].description;
-
-				if(markOrder==0){
-	            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-	                .style("left", (d3.event.pageX-280) + "px")		
-	                .style("top", (d3.event.pageY + 10) + "px");
-
-				majorDescription.transition()		
-	                .duration(200)		
-	                .style("opacity", .9);	
-			    
-				d3.selectAll(".majorVQRHighlightBar0").remove();
-
-
-				var majorSAT = [];
-				var majorGPA = [];
-				var majorSalary = [];
-
-				var majorSAT10=0;
-				var majorSAT25=0;
-				var majorSAT50=0;
-				var majorSAT75=0;
-				var majorSAT90=0;
-
-				var majorGPA10=0;
-				var majorGPA25=0;
-				var majorGPA50=0;
-				var majorGPA75=0;
-				var majorGPA90=0;
-
-				var majorSalary10=0;
-				var majorSalary25=0;
-				var majorSalary50=0;
-				var majorSalary75=0;
-				var majorSalary90=0;
-
-
-				majorSAT10=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);		    				
-				majorSAT25=major_character_requirement[i].SAT25;
-				majorSAT50=major_character_requirement[i].SAT50;
-				majorSAT75=major_character_requirement[i].SAT75;
-				majorSAT90=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
-
-				majorGPA10=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
-				majorGPA25=major_character_requirement[i].GPA25;
-				majorGPA50=major_character_requirement[i].GPA50;
-				majorGPA75=major_character_requirement[i].GPA75;
-				majorGPA90=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
-
-				majorSalary10=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
-				majorSalary25=major_character_requirement[i].salary25;
-				majorSalary50=major_character_requirement[i].salary50;
-				majorSalary75=major_character_requirement[i].salary75;
-				majorSalary90=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
-
-
-				majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
-				majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
-				majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
-
-				majorSATbar.select("rect").transition().duration(200)
-					.attr("x",function(d,i){return -67+ (majorSAT[i]-800)*0.265;})
-					.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
-
-				majorGPAbar.select("rect").transition().duration(200)
-					.attr("x",function(d,i){return -67+ (majorGPA[i]-2.0)*90;})
-					.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
-
-				majorSalarybar.select("rect").transition().duration(200)
-					.attr("x",function(d,i){return -67+ (majorSalary[i]-10000)*0.0023;})
-					.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
-				}if (markOrder==1) {
-					//create new bars
-					majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-	                .style("left", (d3.event.pageX-280) + "px")		
-	                .style("top", (d3.event.pageY + 10) + "px");
-
-				majorDescription.transition()		
-	                .duration(200)		
-	                .style("opacity", .9);	
-			    d3.selectAll(".majorVQRHighlightBar1").remove();
-				}
-		    }
-		}
-		markOrder++;
-}*/
-
-};
-
-var omarkOrder = 0;
-var omarkList = [0,0];
-var occupationVQRHighlightBar0, occupationVQRHighlightBar1;
-function clickOnOccupation(){
-	d3.selectAll(".occupationSubbar").select("rect").transition().duration(500)					
-		.attr("stroke-width", 0.5)
-		.attr("stroke","black");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
-	d3.selectAll(".mainPath").style("fill-opacity",0.1);
-	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
-	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
-		.attr("stroke-width", 4)
-		.attr("stroke","red");
-	/*
-	if (omarkOrder>1)
-		omarkOrder=0;
-	if(omarkOrder<2){
-
-		var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
-		d3.selectAll(".mainPath").style("fill-opacity",0.4);
-		d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
-		
-		
-		d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
-			.attr("stroke-width", 4)
-			.attr("stroke", function(){
-				if(omarkOrder==0){
-					d3.selectAll(".occupationSubbar").selectAll("rect[cid=zero]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[0]).attr("cid","zero");
-					return "#FA8072";}	
-				if(omarkOrder==1){
-					d3.selectAll(".occupationSubbar").selectAll("rect[cid=one]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[0]).attr("cid","one");
-					return "#82CAFA";}
-			});
-			
-		d3.select(this.parentNode.childNodes[1]).transition().duration(500)
-			.style("fill", function(){
-				if(omarkOrder==0){
-					
-					d3.selectAll(".occupationSubbar").selectAll("text[cid=zero]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[1]).attr("cid","zero");
-					return "#FA8072";}	
-				if(omarkOrder==1){
-					d3.selectAll(".occupationSubbar").selectAll("text[cid=one]").attr("cid","init");
-					d3.select(this.parentNode.childNodes[1]).attr("cid","one");
-					return "#82CAFA";}
-			});	
-
-		d3.selectAll(".occupationSubbar").selectAll("rect[cid=init]").attr("stroke-width", 0);
-		d3.selectAll(".occupationSubbar").selectAll("text[cid=init]").style("fill", mainOccuBarColor);
-		
-		for (var i = 0; i < occupation_character_requirement.length; i++) {
-		    //calculate average of college
-		    if(occupation_character_requirement[i].occupation == this.id){
-		    	var occupationVQRBuff=[];
-		    	occupationVQRBuff.push(occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill);
-
-				name = occupation_character_requirement[i].occupation;
-				description = occupation_character_requirement[i].description;
-
-				if(omarkOrder==0){
-	            occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-	                .style("left", (d3.event.pageX-280) + "px")		
-	                .style("top", (d3.event.pageY + 10) + "px");
-
-				occupationDescription.transition()		
-	                .duration(200)		
-	                .style("opacity", .9);	
-			    
-				d3.selectAll(".occupationVQRHighlightBar0").remove();
-				// occupationVQRHighlightBar0=svg.selectAll(".occupationVQRHighlightBar0")
-		  //           .data(occupationVQRBuff)
-		  //           .enter().append("g")
-		  //           .attr("class","occupationVQRHighlightBar0");
-
-		  //           occupationVQRHighlightBar0.append("rect") 
-		  //               .attr("x",function (d,i,j) { return 943+ d*172 - 3; })
-		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-		  //               .attr("height",function (d,i,j) { return 0;})
-		  //               .attr("width",6)
-		  //               .style("fill-opacity",0.9)
-		  //               .style("fill", function(){
-				// 			if(omarkOrder==0)
-				// 				return "#FA8072";
-				// 			if(omarkOrder==1)
-				// 				return "#82CAFA";
-				// 		});
-
-		  //           occupationVQRHighlightBar0.selectAll("rect").transition().duration(300)
-				// 		.style("opacity",0.9)
-				// 		.attr("height",function (d,i,j) { return 40;});
-
-				
-				var occupationSalary=[];
-				var occupationSalary10=0;
-				var occupationSalary25=0;
-				var occupationSalary50=0;
-				var occupationSalary75=0;
-				var occupationSalary90=0;
-				var occupationLength=0;
-
-				occupationSalary10=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
-				occupationSalary25=occupation_character_requirement[i].salary25;
-				occupationSalary50=occupation_character_requirement[i].salary50;
-				occupationSalary75=occupation_character_requirement[i].salary75;
-				occupationSalary90=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
-
-				occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-
-				occupationSalarybar.select("rect").transition().duration(200)
-					.attr("x",function(d,i){return -67+ 1010+(occupationSalary[i]-10000)*0.0023;})
-					.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
-				}if (omarkOrder==1) {
-					//create new bars
-					occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-	                .style("left", (d3.event.pageX-280) + "px")		
-	                .style("top", (d3.event.pageY + 10) + "px");
-
-				occupationDescription.transition()		
-	                .duration(200)		
-	                .style("opacity", .9);	
-			    d3.selectAll(".occupationVQRHighlightBar1").remove();
-				// occupationVQRHighlightBar1=svg.selectAll(".occupationVQRHighlightBar1")
-		  //           .data(occupationVQRBuff)
-		  //           .enter().append("g")
-		  //           .attr("class","occupationVQRHighlightBar1");
-
-		  //           occupationVQRHighlightBar1.append("rect") 
-		  //               .attr("x",function (d,i,j) { return 943+ d*172 - 3;})
-		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
-		  //               .attr("height",function (d,i,j) { return 0;})
-		  //               .attr("width",6)
-		  //               .style("fill-opacity",0.9)
-		  //               .style("fill", function(){
-				// 			if(omarkOrder==0)
-				// 				return "#FA8072";
-				// 			if(omarkOrder==1)
-				// 				return "#82CAFA";
-				// 		});
-
-		  //           occupationVQRHighlightBar1.selectAll("rect").transition().duration(300)
-				// 		.style("opacity",0.9)
-				// 		.attr("height",function (d,i,j) { return 40;});
-				}
-		    }
-		}
-		omarkOrder++;
-	}
-*/
-};
-
-
-
-
-
-
-
-
-
-//characteristics
-
-function majorCharacterChange(ID){
-	var majorVQRBuff=[];
-	
-	var majorSAT = [];
-	var majorGPA = [];
-	var majorSalary = [];
-
-	var majorSAT10=0;
-	var majorSAT25=0;
-	var majorSAT50=0;
-	var majorSAT75=0;
-	var majorSAT90=0;
-
-	var majorGPA10=0;
-	var majorGPA25=0;
-	var majorGPA50=0;
-	var majorGPA75=0;
-	var majorGPA90=0;
-
-	var majorSalary10=0;
-	var majorSalary25=0;
-	var majorSalary50=0;
-	var majorSalary75=0;
-	var majorSalary90=0;
-	var majorLength=0;
-
-	
-	if(ID != null){
-	    for (var i = 0; i < major_character_requirement.length; i++) {
-	    	if(major_character_requirement[i].college == ID){
-	    		majorLength++;
-	    		majorVQRBuff.push([major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill]);
-
-	    			majorSAT10+=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);
-	    				
-	    			majorSAT25+=major_character_requirement[i].SAT25;
-					majorSAT50+=major_character_requirement[i].SAT50;
-					majorSAT75+=major_character_requirement[i].SAT75;
-					majorSAT90+=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
-
-					majorGPA10+=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
-					majorGPA25+=major_character_requirement[i].GPA25;
-					majorGPA50+=major_character_requirement[i].GPA50;
-					majorGPA75+=major_character_requirement[i].GPA75;
-					majorGPA90+=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
-
-					majorSalary10+=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
-					majorSalary25+=major_character_requirement[i].salary25;
-					majorSalary50+=major_character_requirement[i].salary50;
-					majorSalary75+=major_character_requirement[i].salary75;
-					majorSalary90+=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
-	    	}
-	    };
-	    majorSAT10=parseInt(majorSAT10/majorLength);
-		majorSAT25=parseInt(majorSAT25/majorLength);
-		majorSAT50=parseInt(majorSAT50/majorLength);
-		majorSAT75=parseInt(majorSAT75/majorLength);
-		majorSAT90=parseInt(majorSAT90/majorLength);
-		majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
-
-		majorGPA10=(majorGPA10/majorLength);
-		majorGPA25=(majorGPA25/majorLength);
-		majorGPA50=(majorGPA50/majorLength);
-		majorGPA75=(majorGPA75/majorLength);
-		majorGPA90=(majorGPA90/majorLength);
-		majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
-
-		majorSalary10=(majorSalary10/majorLength);
-		majorSalary25=(majorSalary25/majorLength);
-		majorSalary50=(majorSalary50/majorLength);
-		majorSalary75=(majorSalary75/majorLength);
-		majorSalary90=(majorSalary90/majorLength);
-		majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
-
-	}
-
-	if(ID == null){
-		majorVQRBuff=majorVQR;
-		majorLength=0;
-		for (var i = 0; i < major_character_requirement.length; i++) {
-			if(major_character_requirement[i].SAT10 != 0){
-				majorSAT10+=major_character_requirement[i].SAT10;
-				majorSAT25+=major_character_requirement[i].SAT25;
-				majorSAT50+=major_character_requirement[i].SAT50;
-				majorSAT75+=major_character_requirement[i].SAT75;
-				majorSAT90+=major_character_requirement[i].SAT90;
-				majorLength++;
-			}
-			
-		};
-
-		majorSAT10=parseInt(majorSAT10/majorLength);
-		majorSAT25=parseInt(majorSAT25/majorLength);
-		majorSAT50=parseInt(majorSAT50/majorLength);
-		majorSAT75=parseInt(majorSAT75/majorLength);
-		majorSAT90=parseInt(majorSAT90/majorLength);
-		majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
-
-
-		for (var i = 0; i < major_character_requirement.length; i++) {
-			if(major_character_requirement[i].GPA10 != 0){
-				majorGPA10+=major_character_requirement[i].GPA10;
-				majorGPA25+=major_character_requirement[i].GPA25;
-				majorGPA50+=major_character_requirement[i].GPA50;
-				majorGPA75+=major_character_requirement[i].GPA75;
-				majorGPA90+=major_character_requirement[i].GPA90;
-			}
-		};
-		majorGPA10=majorGPA10/majorLength;
-		majorGPA25=majorGPA25/majorLength;
-		majorGPA50=majorGPA50/majorLength;
-		majorGPA75=majorGPA75/majorLength;
-		majorGPA90=majorGPA90/majorLength;
-		majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
-
-
-		for (var i = 0; i < major_character_requirement.length; i++) {
-			if(major_character_requirement[i].salary10 != 0){
-				majorSalary10+=major_character_requirement[i].salary10;
-				majorSalary25+=major_character_requirement[i].salary25;
-				majorSalary50+=major_character_requirement[i].salary50;
-				majorSalary75+=major_character_requirement[i].salary75;
-				majorSalary90+=major_character_requirement[i].salary90;
-			}
-		};
-		majorSalary10=parseInt(majorSalary10/majorLength);
-		majorSalary25=parseInt(majorSalary25/majorLength);
-		majorSalary50=parseInt(majorSalary50/majorLength);
-		majorSalary75=parseInt(majorSalary75/majorLength);
-		majorSalary90=parseInt(majorSalary90/majorLength);
-		majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
-
-	}
-/*
-    majorVQRBar.selectAll("rect").transition().duration(500)
-    	.attr("y", function (d,i,j){return (i * 70) + 50 +30;})
-		.attr("height",function (d,i,j) { return 0;});
-
-	d3.selectAll(".majorVQRBar").remove();
-
-
-	majorVQRBar=svg.selectAll(".majorVQRBar")
-        .data(majorVQRBuff)
-        .enter().append("g")
-        .attr("class","majorVQRBar");
-
-    majorVQRBar.selectAll("rect") // these
-        .data(function (d,i,j) {return d;}) //lines;   
-        .enter() //text displays normally
-        .append("rect")
-        .attr("x",function (d,i,j) { return 93-160+ d*172; })
-        .attr("y",function (d,i,j) { return (i * 70) + 50; })
-        .attr("height",function (d,i,j) { return 0;})
-        .attr("width",1)
-        .style("opacity",0)
-        .style("fill", heatColor[0]);
-
-    majorVQRBar.selectAll("rect").transition().duration(500)
-		.style("opacity",0.9)
-		.attr("height",function (d,i,j) { return 40;});*/
-	majorSATbar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-		.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
-
-	majorGPAbar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
-		.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
-
-	majorSalarybar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return MSalary_relevantX +33+ (majorSalary[i]-10000)*0.0023;})
-		.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
-};
-
-function occupationCharacterChange(ID){
-
-
-	var occupationVQRBuff=[];
-	var occupationSalary=[];
-
-	var occupationSalary10=0;
-	var occupationSalary25=0;
-	var occupationSalary50=0;
-	var occupationSalary75=0;
-	var occupationSalary90=0;
-	var occupationLength=0;
-
-	if(ID !=null){
-	    for (var i = 0; i < occupation_character_requirement.length; i++) {
-	    	if(occupation_character_requirement[i].occupationGroup == ID){
-	    		occupationLength++;
-	    		occupationVQRBuff.push([occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill]);
-
-
-	    			occupationSalary10+=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
-					occupationSalary25+=occupation_character_requirement[i].salary25;
-					occupationSalary50+=occupation_character_requirement[i].salary50;
-					occupationSalary75+=occupation_character_requirement[i].salary75;
-					occupationSalary90+=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
-	    		
-	    	}
-	    };
-
-	    occupationSalary10=(occupationSalary10/occupationLength);
-		occupationSalary25=(occupationSalary25/occupationLength);
-		occupationSalary50=(occupationSalary50/occupationLength);
-		occupationSalary75=(occupationSalary75/occupationLength);
-		occupationSalary90=(occupationSalary90/occupationLength);
-		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-
-	}
-
-	if(ID == null){
-		occupationVQRBuff=occupationVQR;
-
-		for (var i = 0; i < occupation_character_requirement.length; i++) {
-			if(occupation_character_requirement[i].salary10 != 0){
-				occupationSalary10+=occupation_character_requirement[i].salary10;
-				occupationSalary90+=occupation_character_requirement[i].salary90;
-				occupationSalary75+=occupation_character_requirement[i].salary75;
-				occupationSalary25+=occupation_character_requirement[i].salary25;
-				occupationSalary50+=occupation_character_requirement[i].salary50;
-				occupationLength++;
-			}
-		};
-		occupationSalary10=parseInt(occupationSalary10/occupationLength);
-		occupationSalary25=parseInt(occupationSalary25/occupationLength);
-		occupationSalary50=parseInt(occupationSalary50/occupationLength);
-		occupationSalary75=parseInt(occupationSalary75/occupationLength);
-		occupationSalary90=parseInt(occupationSalary90/occupationLength);
-		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-		console.log(occupationSalary)
-	}
-
-/*
-    occupationVQRBar.selectAll("rect").transition().duration(500)
-    	.attr("y", function (d,i,j){return (i * 70) + 50 +30;})
-		.attr("height",function (d,i,j) { return 0;})
-		;
-
-	d3.selectAll(".occupationVQRBar").remove();
-
-
-	occupationVQRBar=svg.selectAll(".occupationVQRBar")
-        .data(occupationVQRBuff)
-        .enter().append("g")
-        .attr("class","occupationVQRBar");
-
-    occupationVQRBar.selectAll("rect") // these
-        .data(function (d,i,j) {return d;}) //lines;   
-        .enter() //text displays normally
-        .append("rect")
-        .attr("x",function (d,i,j) { return 943+ d*172; })
-        .attr("y",function (d,i,j) { return (i * 70) + 50; })
-        .attr("height",function (d,i,j) { return 0;})
-        .attr("width",1)
-        .style("opacity",0)
-        .style("fill", heatColor[0]);
-
-    occupationVQRBar.selectAll("rect").transition().duration(500)
-		.style("opacity",0.9)
-		.attr("height",function (d,i,j) { return 40;});*/
-
-	occupationSalarybar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return OSalary_relevantX + 33+(occupationSalary[i]-10000)*0.0023;})
-		.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
-};
-
-//calculate RGB color for bars, VQR:0.0~1.0
-//var colorRange=["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];
-
-//red - blue
-var colorRange=["#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4"];
-var colorScale=d3.scaleQuantile().range(colorRange).domain([-1,1]);
-
-function calculateVQRcolor(ID){
-	var VQRBuff=[];
-	var characters={verbal:0,quantitative:0,length:0};
-	var vScore,qScore,eucliDis,BrightScale=0;
-	
-	if(search_click && current == "major"){
-		for (var i = 0; i < ID.length; i++){
-	    	for  (var j = 0; j < major_character_requirement.length; j++){
-	    		if(major_character_requirement[j].major == ID[i]){
-	    			vScore=major_character_requirement[j].verbalSkill;
-	    			qScore=major_character_requirement[j].quantitativeSkill;
-	    			eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    			BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-	    			VQRBuff.push(BrightScale(eucliDis));
-	    		}
-	    	}
-	    }
-	    current = '';
-	}
-
-	if(search_click && current == "occupation"){
-		for (var i = 0; i < ID.length; i++){
-	    	for  (var j = 0; j < occupation_character_requirement.length; j++){
-	    		if(occupation_character_requirement[j].occupation == ID[i]){
-	    			vScore=occupation_character_requirement[j].verbalSkill;
-	    			qScore=occupation_character_requirement[j].quantitativeSkill;
-	    			eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    			BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-	    			VQRBuff.push(BrightScale(eucliDis));
-	    		}
-	    	}
-	    }
-	    current = '';
-	}
-
-	//initial color calculation
-	if (ID != null && current == null) {
-		if (ifCollege) {		
-			for (var i = 0; i < major_character_requirement.length; i++) {
-		    	if(major_character_requirement[i].college == ID){
-		    		characters.verbal += major_character_requirement[i].verbalSkill;
-		    		characters.quantitative += major_character_requirement[i].quantitativeSkill;
-		    		characters.length += 1;
-		    	}
-		    }
-		}
-		
-		if(!ifCollege){
-			for (var i = 0; i < occupation_character_requirement.length; i++) {
-		    	if(occupation_character_requirement[i].occupationGroup == ID){
-		    		characters.verbal += occupation_character_requirement[i].verbalSkill;
-		    		characters.quantitative += occupation_character_requirement[i].quantitativeSkill;
-		    		characters.length += 1;
-		    	}
-
-		    }
-		}
-
-		vScore = characters.verbal/characters.length;
-		qScore = characters.quantitative/characters.length;
-	    eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1]);
-	    VQRBuff = BrightScale(eucliDis);
-	    //VQRBuff.push(colorScale((qScore-vScore)*4));
-	}
-
-	if(ID != null && current =='college'){
-	    for (var i = 0; i < major_character_requirement.length; i++) {
-	    	if(major_character_requirement[i].college == ID){
-
-	    		vScore=major_character_requirement[i].verbalSkill;
-	    		qScore=major_character_requirement[i].quantitativeSkill;
-
-	    		eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    		BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-
-
-	    		VQRBuff.push(BrightScale(eucliDis));
-	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
-
-	    	}
-	    }
-
-
-	}
-
-	
-	if(ID != null && current =='occupationGroup'){
-	    for (var i = 0; i < occupation_character_requirement.length; i++) {
-	    	if(occupation_character_requirement[i].occupationGroup == ID){
-	    		var vScore=occupation_character_requirement[i].verbalSkill;
-	    		var qScore=occupation_character_requirement[i].quantitativeSkill;
-
-	    		var eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    		var BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-
-
-	    		VQRBuff.push(BrightScale(eucliDis));
-	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
-	    	}
-	    }
-	}
-
-
-/*
-	if(search_click){
-		for (var i = 0; i < occupation_character_requirement.length; i++) {
-	    	if(occupation_character_requirement[i].occupationGroup == ID){
-	    		var vScore=occupation_character_requirement[i].verbalSkill;
-	    		var qScore=occupation_character_requirement[i].quantitativeSkill;
-
-	    		var eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    		var BrightScale=d3.scaleLinear().range(["#ffffff",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-
-
-	    		VQRBuff.push(BrightScale(eucliDis));
-	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
-	    	}
-	    }
-	}*/
-	return VQRBuff;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-//mapping(main part)
-
-function draw_path(left, right, number, left_list, left_number, left_x, left_y, left_length, right_list, right_number, right_x, right_y, right_length, color_style){
-
-	d3.selectAll(".mainPath").remove();
-	var VQRcolor;
-	if (current != '') {
-		VQRcolor = calculateVQRcolor(this.idBuff);
-	}
-	else{
-		if(college_click == '?' && occupationGroup_click == '?'){
-			VQRcolor=collegeColor;
-		}
-
-		if(college_click==true){
-			current='college';
-			VQRcolor=calculateVQRcolor(college.click);
-		}
-		else if(occupationGroup_click==true){
-			current='occupationGroup';
-			VQRcolor=calculateVQRcolor(occupationGroup.click);
-		}
-		if(search_click){
-			current ="major";
-			VQRcolor=calculateVQRcolor(major.name);
-		}
-	}
-
-	var test=[0];
-	var mainPath = svg.selectAll(".mainPath")
-		.data(test)
-		.enter().append("g")
-		.attr("class","mainPath");
-
-
-	minn = (searchName!=null)?5:10;
-	gap=2;
-	height=40;
-
-
-	path_left_name_list = [];
-	path_right_name_list = [];
-	path_left_name_list = left_list;
-	path_right_name_list = right_list;
-	
-	var right_current = [];
-	var right_width = [];
-	var left_width = [];
-	var left_current = [];
-
-	
-	//calculating the right width and right current
-	var total=1; //avoid the final total equals to 0
-	for(var i=0;i< right_number.length;i++)
-	     total=total+right_number[i];
-	var scale=(right_length-minn*right_number.length -(right_number.length-1)*gap)/total;
-	
-	for (var i=0;i< right_list.length;i++)
-	{
-		right_width[i]= minn + scale*right_number[i];
-		if(i == 0)
-		 {   right_current[i] = right_y;}
-		else
-		  {  right_current[i]=right_current[i-1]+gap+right_width[i-1];}
-	}
-	// calculating the left width and left current
-    total=1; //avoid the final total equals to 0
-	for(var i=0;i< left_number.length;i++)
-	    total=total+left_number[i];
-    scale=(left_length-minn*left_number.length -(left_number.length-1)*gap)/total;
-	
-    for (var i=0;i< left_list.length;i++)
-	{
-		left_width[i]= minn + scale*left_number[i];
-		if(i == 0 )
-		 {   left_current[i]=left_y; }
-		else
-		{    left_current[i]=left_current[i-1]+gap+left_width[i-1];}
-	}
-
-	//draw path
-
-
-
-	for(var i=0;i< left_list.length;i++){
-		for(var j=0;j< right_list.length;j++){
-			first_y=left_current[i];
-			first_x=left_x+height;
-
-			
-			
-			left_right_num=0;
-			for(var k=0;k< left.length;k++){
-				if(left[k] == left_list[i] && right[k] == right_list[j]){
-					left_right_num = number[k];
-					break;
-				}
-			}
-			if (left_right_num > 0){
-				left_current[i]=left_current[i]+left_right_num*left_width[i]/left_number[i];
-				fourth_y=left_current[i];
-				fourth_x=left_x+height;
-				
-				second_y=right_current[j];
-				second_x=right_x;
-				
-				right_current[j]=right_current[j]+left_right_num*right_width[j]/right_number[j];
-				third_y=right_current[j];
-				third_x=right_x;
-
-
-				poly = [first_x,first_y,second_x,second_y,third_x,third_y,fourth_x,fourth_y];
-
-
-				var color;
-				if(i<10)
-					color=collegeColor[i];
-				else{
-					var num=Math.floor((Math.random() * 5) + 5);
-					color=collegeColor[num];
-				}
-				
-				
-				mainPath.append("polygon")
-					.attr("points",function (d){return poly;})
-				    .style("fill",function (d){
-
-				    	if (current =='') {
-				    		if(college_click){
-				    			return VQRcolor[i];
-				    		}
-
-				    		
-				    	}
-				    	else {
-				    		if (current == 'college') {
-				    			return VQRcolor[i];
-				    		}
-				    		if (current == 'occupationGroup') {
-				    			return VQRcolor[j];
-				    		}
-				    	}
-				    		
-				    })
-				    .attr("id",function(d){
-				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
-				    		return college.name[i].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
-				    		
-				    })
-				    .attr("ogid",function(d){
-				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
-				    		return occupationGroup.name[j].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
-				    		
-				    })
-				    .attr("cid",function(d){
-				    	if(college.click != "?" || search_click)
-					    	return major.name[i].replace(/\s/g, '').replace(/','/g,'').replace(/ /g,'');
-				    })
-				    .attr("oid",function(d){
-				    	if(occupationGroup.click != "?" || search_click)
-				    		return occupation.name[j].replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
-				    })
-				    .attr("textnum",function(d){
-				    	return left_right_num;
-				    })
-				    /*
-				    .on("mouseover", function(d) {
-			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
-			            d3.select(this).style("fill-opacity",0.9);
-			            textY=(this.points[0].y+this.points[2].y)/2;
-
-			            mainPath.append("circle")
-			            	.attr("cx", (first_x+second_x)/2)
-	                       .attr("cy", textY-5)
-	                       .attr("r", 30)
-	                       .style("fill", "white")
-	                       .style("fill-opacity",0.4);
-
-			            mainPath.append("text")
-			            	.text(d3.select(this).attr("textnum"))
-			            	.style("fill","white")
-			            	.style("font-size",20)
-							.style("font-weight","bold")						            	
-			            	.style("stroke","black")
-			            	.style("stroke-width",1)
-			            	.style("fill-opacity",1)
-			            	.attr("x",(first_x+second_x)/2-15)
-			            	.attr("y",textY);
-			        })
-			        .on("mouseout", function(d) {
-			            
-			            mainPath.selectAll("text").remove();
-			            mainPath.selectAll("circle").remove();
-			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
-			        })*/
-				    .style("fill-opacity",0)
-				    .attr("class","mainPath");
-
-				mainPath.append("text").text("");
-
-
-			
-			}
-		}
-	};
-
-	d3.selectAll(".mainPath").transition().duration(animationTime)//1000
-		.style("fill-opacity",0.4);     
-};
-
-
-//Draw edges functions: 2
-//draw main edges
-function find_college_occupationGroup(){
-	college_click = '?';
-	occupationGroup_click = '?';
-
-	var hr = new XMLHttpRequest();
-	hr.open("POST", url, true);
-	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
-
-    hr.onreadystatechange = function() {
-	    if(hr.readyState == 4 && hr.status == 200) {
-			///
-			
-			var x=hr.responseText.split("*");
-            var num1= parseInt(x[0]);
-			
-			education_job.education = [];
-			education_job.job = [];
-			education_job.number = [];
-			var k =1 ;
-			for (var i=0;i < num1;i++)
-			{
-		        education_job.education.push(x[k]);
-				k=k+1;
-				education_job.job.push(x[k]);
-				k=k+1;
-				education_job.number.push(parseInt(x[k]));
-				k=k+1;
-			}
-
-			draw_path(education_job.education,education_job.job, education_job.number,
-				      college.name,college.number, relevantX - 10, collegeX[0],  620, 
- 					  occupationGroup.name,occupationGroup.number, relevantX + 290 ,occupationGroupX[0],620,
- 					  college.style);
-
-
-		}
-	}
-};
-
-//draw different hierachical edges
-function find_major_occupation(college_click, occupationGroup_click, startpoint,style,subbarColor){
-			
-	college_click=college_click;
-	occupationGroup_click=occupationGroup_click;
-
-	if(!college_click)
-		college_click='?';
-	if(!occupationGroup_click)
-		occupationGroup_click='?';
-
-	var hr = new XMLHttpRequest();
-	hr.open("POST", url, true);
-	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-    hr.onreadystatechange = function() {
-	    if(hr.readyState == 4 && hr.status == 200) {
-			///
-			var x=hr.responseText.split("*");
-			
-			var num1= parseInt(x[0]);
-			var num2= parseInt(x[num1*2+1]);
-			var num3= parseInt(x[num1*2+1+num2*2+1]);
-
-			major.name = [];
-			major.number = [];
-			major.style = [];
-			major.opacity = [];
-			major.character = [];
-			major.college = [];
-
-			occupation.name = [];
-			occupation.number = [];
-			occupation.style = [];
-			occupation.opacity = [];
-			occupation.character = [];
-			occupation.occupationGroup = [];
-			
-			education_job.education = [];
-			education_job.job = [];
-			education_job.number = [];
-
-			
-			
-
-			//judge the conditions of college,major to occupationGroup,occupation
-			if(college_click!='?' && occupationGroup_click=='?'){			
-				var k=1;
-				k=calculateMajor(num1,x,k,college_click);
-
-				k=k+1;
-				k=calculateMajorToOccupation(num2,x,k,college_click,occupationGroup_click);
-			}
-			else if(college_click=='?' && occupationGroup_click!='?'){			
-				var k=1;
-				k=calculateOccupation(num1,x,k,college_click);
-
-				k=k+1;
-				k=calculateMajorToOccupation(num2,x,k,college_click,occupationGroup_click);
-				
-			}
-			else if(college_click!='?' && occupationGroup_click!='?'){			
-				var k=1;
-				k=calculateMajor(num1,x,k,college_click);
-
-				k+=1;
-				k=calculateOccupation(num2,x,k,college_click);
-
-				k=k+1;
-				k=calculateMajorToOccupation(num3,x,k,college_click,occupationGroup_click);
-			}
-
-			
-			if(college_click != college_click_buff){
-				create_major_bar(major,startpoint, style,subbarColor);	
-				college_click_buff=college_click; 
-			}			  	
-			if (occupationGroup_click != occupationGroup_click_buff){
-				create_occupation_bar(occupation,startpoint,style,subbarColor);	
-				 occupationGroup_click_buff=occupationGroup_click;
-
-			}
-
-
-			//major to occupationGroup
-			if(college_click!='?' && occupationGroup_click=='?'){
-				draw_path(education_job.education,education_job.job, education_job.number,
-			        major.name, major.number, relevantX - 12.5, majorX[0],  458, 
-					    occupationGroup.name,occupationGroup.number, relevantX + 289.5 ,occupationGroupX[0],620,
-					    college.style);
-				}
-
-				//college to occupation
-			if(college_click=='?' && occupationGroup_click!='?'){
-				draw_path(education_job.education,education_job.job, education_job.number,
-			        college.name, college.number, relevantX - 10, collegeX[0],  620, 
-					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
-					    college.style);
-			}
-
-			//major to occupation
-			if(college_click!='?' && occupationGroup_click!='?'){
-				draw_path(education_job.education,education_job.job, education_job.number,
-			        major.name, major.number, relevantX - 12.5, majorX[0],  458, 
-					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
-					    college.style);
-			}
-	    }
-	}
-	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
-	//hr.send("major="+null+"&occupation="+null);	
-	switch(occupationGroup.click)
+      		.duration(animationTime);  
+      		switch(occupationGroup.click)
 	{
 		case("Agriculture"):min=0;max=3;maini=0;break;
 		case("Business"):min=4;max=31;maini=1;break;
@@ -3006,6 +1791,174 @@ function find_major_occupation(college_click, occupationGroup_click, startpoint,
 				   });
 			}
 		}
+		//suboccupationSalarybar
+		for (var i = 0; i < 13*4; i++) {
+		if (i%13 <maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("height", function(d) {
+				   		if(i<13)return (d.salary75-d.salary25) * 0.002;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.002;
+            			else if(i>=26&&i<39) return 2;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.002;
+				   })
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+w / 80*i;
+            	else if(i>=13&&i<26) return chart_base_x+w / 80*(i-13);
+            	else if(i>=26&&i<39) return chart_base_x+w / 80*(i-26);
+            	else if(i>=39&&i<52) return chart_base_x+w / 80*(i-39);
+			})
+			.attr("width", w / 80 - 1);
+			}
+		if (i%13 == maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i%13 >maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i%13]];
+				   }) 
+			.attr("height", function(d) {
+				   		if(i<13)return (d.salary75-d.salary25) * 0.002;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.002;
+            			else if(i>=26&&i<39) return 2;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.002;
+				   })
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80;
+            	else if(i>=13&&i<26) return chart_base_x+w-(12-maini)*w / 80+(i-13-maini)*w / 80;
+            	else if(i>=26&&i<39) return chart_base_x+w-(12-maini)*w / 80+(i-26-maini)*w / 80;
+            	else if(i>=39&&i<52) return chart_base_x+w-(12-maini)*w / 80+(i-39-maini)*w / 80;
+
+			})
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117*4; i++) {
+		if (i%117 <= max&& min <= i%117) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<117)return subbarColor[i%117-min];
+            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117*2&&i<117*3) return "black";
+            	else if(i>=117*3&&117*4) return "black";
+				   })
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min) * (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min+0.5) * (w-w / 80*26) / 28-1;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min) * (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min+0.5) * (w-w / 80*26) / 28-1;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return (d.salary75-d.salary25) * 0.002;
+            			else if(i>=117&&i<117*2) return (d.salary90-d.salary75)* 0.002;
+            			else if(i>=117*2&&i<117*3) return 2;
+            			else if(i>=117*3&&i<117*4) return (d.salary25-d.salary10)* 0.002;
+				   });
+			}
+		if (i%117 < min) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<117)return subbarColor[i%117-min];
+            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117*2&&i<117*3) return "black";
+            	else if(i>=117*3&&117*4) return "black";
+				   })
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return 0;
+            			else if(i>=117&&i<117*2) return 0;
+            			else if(i>=117*2&&i<117*3) return 0;
+            			else if(i>=117*3&&i<117*4) return 0;
+				   });
+			}
+		
+		if (i%117 >max) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<117)return subbarColor[i%117-min];
+            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117*2&&i<117*3) return "black";
+            	else if(i>=117*3&&117*4) return "black";
+				   })
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return 0;
+            			else if(i>=117&&i<117*2) return 0;
+            			else if(i>=117*2&&i<117*3) return 0;
+            			else if(i>=117*3&&i<117*4) return 0;
+				   });
+			}
+		}
+		
+		
 	}
 	else
 	{//OSA
@@ -3335,6 +2288,1218 @@ function find_major_occupation(college_click, occupationGroup_click, startpoint,
 };
 
 
+
+function mouseoverMajor(){
+	d3.select(this).style("cursor", "pointer");
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.4);
+	//d3.selectAll("polygon#"+pathID).style("fill-opacity",0.9);
+	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",1.0);//0.9
+	d3.select("#majorScatterplot").selectAll("circle[id="+pathID+"]").style("fill-opacity",1)
+		.attr("stroke-width",3)
+		.attr("stroke", "red");
+
+	for (var i = 0; i < major_character_requirement.length; i++) {
+	    //calculate average of college
+	    if(major_character_requirement[i].major == this.id){
+	    	var majorVQRBuff=[];
+	    	majorVQRBuff.push(major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill);
+
+			name = major_character_requirement[i].major;
+			description = major_character_requirement[i].description;
+
+
+            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+                .style("left", (d3.event.pageX-280) + "px")		
+                .style("top", (d3.event.pageY + 10) + "px");
+
+			majorDescription.transition()		
+                .duration(200)		
+                .style("opacity", .9);	
+
+			var majorSAT = [];
+			var majorGPA = [];
+			var majorSalary = [];
+
+			var majorSAT10=0;
+			var majorSAT25=0;
+			var majorSAT50=0;
+			var majorSAT75=0;
+			var majorSAT90=0;
+
+			var majorGPA10=0;
+			var majorGPA25=0;
+			var majorGPA50=0;
+			var majorGPA75=0;
+			var majorGPA90=0;
+
+			var majorSalary10=0;
+			var majorSalary25=0;
+			var majorSalary50=0;
+			var majorSalary75=0;
+			var majorSalary90=0;
+
+
+			majorSAT10=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);		    				
+			majorSAT25=major_character_requirement[i].SAT25;
+			majorSAT50=major_character_requirement[i].SAT50;
+			majorSAT75=major_character_requirement[i].SAT75;
+			majorSAT90=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
+
+			majorGPA10=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
+			majorGPA25=major_character_requirement[i].GPA25;
+			majorGPA50=major_character_requirement[i].GPA50;
+			majorGPA75=major_character_requirement[i].GPA75;
+			majorGPA90=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
+
+			majorSalary10=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
+			majorSalary25=major_character_requirement[i].salary25;
+			majorSalary50=major_character_requirement[i].salary50;
+			majorSalary75=major_character_requirement[i].salary75;
+			majorSalary90=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
+
+
+			majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
+			majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
+			majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
+
+			majorSATbar.select("rect").transition().duration(200)
+				.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
+				.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+
+			majorGPAbar.select("rect").transition().duration(200)
+				.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
+				.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
+
+			majorSalarybar.select("rect").transition().duration(200)
+				.attr("x",function(d,i){return MSalary_relevantX+33+ (majorSalary[i]-10000)*0.0023;})
+				.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
+	    }
+	}
+};
+
+function mouseoverOccupation(){
+	d3.select(this).style("cursor", "pointer");
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.4);
+	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",1);
+	d3.select("#occupationScatterplot").selectAll("circle[id="+pathID+"]").style("fill-opacity",1)
+		.attr("stroke-width",3)
+		.attr("stroke", "red");
+
+	for (var i = 0; i < occupation_character_requirement.length; i++) {
+	    if(occupation_character_requirement[i].occupation == this.id){
+	    	var occupatioinVQRBuff=[];
+	    	occupatioinVQRBuff.push(occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill);
+		
+		name = occupation_character_requirement[i].occupation;
+		description = occupation_character_requirement[i].description;
+
+			var occupationSalary=[];
+			var occupationSalary10=0;
+			var occupationSalary25=0;
+			var occupationSalary50=0;
+			var occupationSalary75=0;
+			var occupationSalary90=0;
+			var occupationLength=0;
+
+			occupationSalary10=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
+			occupationSalary25=occupation_character_requirement[i].salary25;
+			occupationSalary50=occupation_character_requirement[i].salary50;
+			occupationSalary75=occupation_character_requirement[i].salary75;
+			occupationSalary90=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
+
+			occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
+
+
+
+	    }
+	}
+};
+
+var markOrder = 0;
+var markList = [0,0];
+var majorVQRHighlightBar0, majorVQRHighlightBar1;
+function clickOnMajor(){
+	d3.selectAll(".collegeSubbar").select("rect").transition().duration(500)					
+		.attr("stroke-width", 0.5)
+		.attr("stroke","black");
+	var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.1);
+	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
+	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+		.attr("stroke-width", 4)
+		.attr("stroke","red");
+
+	/*
+	if (markOrder>1)
+		markOrder=0;
+	if(markOrder<2){
+
+		var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
+		d3.selectAll(".mainPath").style("fill-opacity",0.3);
+		d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
+		
+		//d3.selectAll("rect[markOrder=0]").style("fill-opacity",0.1);
+		d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+			.attr("stroke-width", 4)
+			.attr("stroke", function(){
+				if(markOrder==0){
+					d3.selectAll(".collegeSubbar").selectAll("rect[cid=zero]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[0]).attr("cid","zero");
+					return "#FA8072";}	
+				if(markOrder==1){
+					d3.selectAll(".collegeSubbar").selectAll("rect[cid=one]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[0]).attr("cid","one");
+					return "#82CAFA";}
+			});
+			
+		d3.select(this.parentNode.childNodes[1]).transition().duration(500)
+			.style("fill", function(){
+				if(markOrder==0){
+					
+					d3.selectAll(".collegeSubbar").selectAll("text[cid=zero]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[1]).attr("cid","zero");
+					return "#FA8072";}	
+				if(markOrder==1){
+					d3.selectAll(".collegeSubbar").selectAll("text[cid=one]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[1]).attr("cid","one");
+					return "#82CAFA";}
+			});	
+
+		d3.selectAll(".collegeSubbar").selectAll("rect[cid=init]").attr("stroke-width", 0);
+		d3.selectAll(".collegeSubbar").selectAll("text[cid=init]").style("fill", mainCollBarColor);
+		
+		for (var i = 0; i < major_character_requirement.length; i++) {
+		    //calculate average of college
+		    if(major_character_requirement[i].major == this.id){
+		    	var majorVQRBuff=[];
+		    	majorVQRBuff.push(major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill);
+
+				name = major_character_requirement[i].major;
+				description = major_character_requirement[i].description;
+
+				if(markOrder==0){
+	            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	                .style("left", (d3.event.pageX-280) + "px")		
+	                .style("top", (d3.event.pageY + 10) + "px");
+
+				majorDescription.transition()		
+	                .duration(200)		
+	                .style("opacity", .9);	
+			    
+				d3.selectAll(".majorVQRHighlightBar0").remove();
+
+
+				var majorSAT = [];
+				var majorGPA = [];
+				var majorSalary = [];
+
+				var majorSAT10=0;
+				var majorSAT25=0;
+				var majorSAT50=0;
+				var majorSAT75=0;
+				var majorSAT90=0;
+
+				var majorGPA10=0;
+				var majorGPA25=0;
+				var majorGPA50=0;
+				var majorGPA75=0;
+				var majorGPA90=0;
+
+				var majorSalary10=0;
+				var majorSalary25=0;
+				var majorSalary50=0;
+				var majorSalary75=0;
+				var majorSalary90=0;
+
+
+				majorSAT10=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);		    				
+				majorSAT25=major_character_requirement[i].SAT25;
+				majorSAT50=major_character_requirement[i].SAT50;
+				majorSAT75=major_character_requirement[i].SAT75;
+				majorSAT90=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
+
+				majorGPA10=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
+				majorGPA25=major_character_requirement[i].GPA25;
+				majorGPA50=major_character_requirement[i].GPA50;
+				majorGPA75=major_character_requirement[i].GPA75;
+				majorGPA90=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
+
+				majorSalary10=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
+				majorSalary25=major_character_requirement[i].salary25;
+				majorSalary50=major_character_requirement[i].salary50;
+				majorSalary75=major_character_requirement[i].salary75;
+				majorSalary90=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
+
+
+				majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
+				majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
+				majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
+
+				majorSATbar.select("rect").transition().duration(200)
+					.attr("x",function(d,i){return -67+ (majorSAT[i]-800)*0.265;})
+					.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+
+				majorGPAbar.select("rect").transition().duration(200)
+					.attr("x",function(d,i){return -67+ (majorGPA[i]-2.0)*90;})
+					.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
+
+				majorSalarybar.select("rect").transition().duration(200)
+					.attr("x",function(d,i){return -67+ (majorSalary[i]-10000)*0.0023;})
+					.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
+				}if (markOrder==1) {
+					//create new bars
+					majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	                .style("left", (d3.event.pageX-280) + "px")		
+	                .style("top", (d3.event.pageY + 10) + "px");
+
+				majorDescription.transition()		
+	                .duration(200)		
+	                .style("opacity", .9);	
+			    d3.selectAll(".majorVQRHighlightBar1").remove();
+				}
+		    }
+		}
+		markOrder++;
+}*/
+
+};
+
+var omarkOrder = 0;
+var omarkList = [0,0];
+var occupationVQRHighlightBar0, occupationVQRHighlightBar1;
+function clickOnOccupation(){
+	d3.selectAll(".occupationSubbar").select("rect").transition().duration(500)					
+		.attr("stroke-width", 0.5)
+		.attr("stroke","black");
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
+	d3.selectAll(".mainPath").style("fill-opacity",0.1);
+	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
+	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+		.attr("stroke-width", 4)
+		.attr("stroke","red");
+	/*
+	if (omarkOrder>1)
+		omarkOrder=0;
+	if(omarkOrder<2){
+
+		var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
+		d3.selectAll(".mainPath").style("fill-opacity",0.4);
+		d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
+		
+		
+		d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
+			.attr("stroke-width", 4)
+			.attr("stroke", function(){
+				if(omarkOrder==0){
+					d3.selectAll(".occupationSubbar").selectAll("rect[cid=zero]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[0]).attr("cid","zero");
+					return "#FA8072";}	
+				if(omarkOrder==1){
+					d3.selectAll(".occupationSubbar").selectAll("rect[cid=one]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[0]).attr("cid","one");
+					return "#82CAFA";}
+			});
+			
+		d3.select(this.parentNode.childNodes[1]).transition().duration(500)
+			.style("fill", function(){
+				if(omarkOrder==0){
+					
+					d3.selectAll(".occupationSubbar").selectAll("text[cid=zero]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[1]).attr("cid","zero");
+					return "#FA8072";}	
+				if(omarkOrder==1){
+					d3.selectAll(".occupationSubbar").selectAll("text[cid=one]").attr("cid","init");
+					d3.select(this.parentNode.childNodes[1]).attr("cid","one");
+					return "#82CAFA";}
+			});	
+
+		d3.selectAll(".occupationSubbar").selectAll("rect[cid=init]").attr("stroke-width", 0);
+		d3.selectAll(".occupationSubbar").selectAll("text[cid=init]").style("fill", mainOccuBarColor);
+		
+		for (var i = 0; i < occupation_character_requirement.length; i++) {
+		    //calculate average of college
+		    if(occupation_character_requirement[i].occupation == this.id){
+		    	var occupationVQRBuff=[];
+		    	occupationVQRBuff.push(occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill);
+
+				name = occupation_character_requirement[i].occupation;
+				description = occupation_character_requirement[i].description;
+
+				if(omarkOrder==0){
+	            occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	                .style("left", (d3.event.pageX-280) + "px")		
+	                .style("top", (d3.event.pageY + 10) + "px");
+
+				occupationDescription.transition()		
+	                .duration(200)		
+	                .style("opacity", .9);	
+			    
+				d3.selectAll(".occupationVQRHighlightBar0").remove();
+				// occupationVQRHighlightBar0=svg.selectAll(".occupationVQRHighlightBar0")
+		  //           .data(occupationVQRBuff)
+		  //           .enter().append("g")
+		  //           .attr("class","occupationVQRHighlightBar0");
+
+		  //           occupationVQRHighlightBar0.append("rect") 
+		  //               .attr("x",function (d,i,j) { return 943+ d*172 - 3; })
+		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
+		  //               .attr("height",function (d,i,j) { return 0;})
+		  //               .attr("width",6)
+		  //               .style("fill-opacity",0.9)
+		  //               .style("fill", function(){
+				// 			if(omarkOrder==0)
+				// 				return "#FA8072";
+				// 			if(omarkOrder==1)
+				// 				return "#82CAFA";
+				// 		});
+
+		  //           occupationVQRHighlightBar0.selectAll("rect").transition().duration(300)
+				// 		.style("opacity",0.9)
+				// 		.attr("height",function (d,i,j) { return 40;});
+
+				
+				var occupationSalary=[];
+				var occupationSalary10=0;
+				var occupationSalary25=0;
+				var occupationSalary50=0;
+				var occupationSalary75=0;
+				var occupationSalary90=0;
+				var occupationLength=0;
+
+				occupationSalary10=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
+				occupationSalary25=occupation_character_requirement[i].salary25;
+				occupationSalary50=occupation_character_requirement[i].salary50;
+				occupationSalary75=occupation_character_requirement[i].salary75;
+				occupationSalary90=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
+
+				occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
+
+				occupationSalarybar.select("rect").transition().duration(200)
+					.attr("x",function(d,i){return -67+ 1010+(occupationSalary[i]-10000)*0.0023;})
+					.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
+				}if (omarkOrder==1) {
+					//create new bars
+					occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	                .style("left", (d3.event.pageX-280) + "px")		
+	                .style("top", (d3.event.pageY + 10) + "px");
+
+				occupationDescription.transition()		
+	                .duration(200)		
+	                .style("opacity", .9);	
+			    d3.selectAll(".occupationVQRHighlightBar1").remove();
+				// occupationVQRHighlightBar1=svg.selectAll(".occupationVQRHighlightBar1")
+		  //           .data(occupationVQRBuff)
+		  //           .enter().append("g")
+		  //           .attr("class","occupationVQRHighlightBar1");
+
+		  //           occupationVQRHighlightBar1.append("rect") 
+		  //               .attr("x",function (d,i,j) { return 943+ d*172 - 3;})
+		  //               .attr("y",function (d,i,j) { return (i * 70) + 50; })
+		  //               .attr("height",function (d,i,j) { return 0;})
+		  //               .attr("width",6)
+		  //               .style("fill-opacity",0.9)
+		  //               .style("fill", function(){
+				// 			if(omarkOrder==0)
+				// 				return "#FA8072";
+				// 			if(omarkOrder==1)
+				// 				return "#82CAFA";
+				// 		});
+
+		  //           occupationVQRHighlightBar1.selectAll("rect").transition().duration(300)
+				// 		.style("opacity",0.9)
+				// 		.attr("height",function (d,i,j) { return 40;});
+				}
+		    }
+		}
+		omarkOrder++;
+	}
+*/
+};
+
+
+
+
+
+
+
+
+
+//characteristics
+
+function majorCharacterChange(ID){
+	var majorVQRBuff=[];
+	
+	var majorSAT = [];
+	var majorGPA = [];
+	var majorSalary = [];
+
+	var majorSAT10=0;
+	var majorSAT25=0;
+	var majorSAT50=0;
+	var majorSAT75=0;
+	var majorSAT90=0;
+
+	var majorGPA10=0;
+	var majorGPA25=0;
+	var majorGPA50=0;
+	var majorGPA75=0;
+	var majorGPA90=0;
+
+	var majorSalary10=0;
+	var majorSalary25=0;
+	var majorSalary50=0;
+	var majorSalary75=0;
+	var majorSalary90=0;
+	var majorLength=0;
+
+	
+	if(ID != null){
+	    for (var i = 0; i < major_character_requirement.length; i++) {
+	    	if(major_character_requirement[i].college == ID){
+	    		majorLength++;
+	    		majorVQRBuff.push([major_character_requirement[i].verbalSkill, major_character_requirement[i].quantitativeSkill, major_character_requirement[i].reasoningSkill]);
+
+	    			majorSAT10+=(major_character_requirement[i].SAT10==0?major_character_requirement[i].SAT25-(initmajorSAT[1]-initmajorSAT[0]):major_character_requirement[i].SAT10);
+	    				
+	    			majorSAT25+=major_character_requirement[i].SAT25;
+					majorSAT50+=major_character_requirement[i].SAT50;
+					majorSAT75+=major_character_requirement[i].SAT75;
+					majorSAT90+=(major_character_requirement[i].SAT90==0?major_character_requirement[i].SAT75+(initmajorSAT[4]-initmajorSAT[3]):major_character_requirement[i].SAT90);
+
+					majorGPA10+=(major_character_requirement[i].GPA10==0?major_character_requirement[i].GPA25-(initmajorGPA[1]-initmajorGPA[0]):major_character_requirement[i].GPA10);
+					majorGPA25+=major_character_requirement[i].GPA25;
+					majorGPA50+=major_character_requirement[i].GPA50;
+					majorGPA75+=major_character_requirement[i].GPA75;
+					majorGPA90+=(major_character_requirement[i].GPA90==0?major_character_requirement[i].GPA75+(initmajorGPA[4]-initmajorGPA[3]):major_character_requirement[i].GPA90);
+
+					majorSalary10+=(major_character_requirement[i].salary10==0?major_character_requirement[i].salary25-(initmajorSalary[1]-initmajorSalary[0]):major_character_requirement[i].salary10);
+					majorSalary25+=major_character_requirement[i].salary25;
+					majorSalary50+=major_character_requirement[i].salary50;
+					majorSalary75+=major_character_requirement[i].salary75;
+					majorSalary90+=(major_character_requirement[i].salary90==0?major_character_requirement[i].salary75+(initmajorSalary[4]-initmajorSalary[3]):major_character_requirement[i].salary90);
+	    	}
+	    };
+	    majorSAT10=parseInt(majorSAT10/majorLength);
+		majorSAT25=parseInt(majorSAT25/majorLength);
+		majorSAT50=parseInt(majorSAT50/majorLength);
+		majorSAT75=parseInt(majorSAT75/majorLength);
+		majorSAT90=parseInt(majorSAT90/majorLength);
+		majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
+
+		majorGPA10=(majorGPA10/majorLength);
+		majorGPA25=(majorGPA25/majorLength);
+		majorGPA50=(majorGPA50/majorLength);
+		majorGPA75=(majorGPA75/majorLength);
+		majorGPA90=(majorGPA90/majorLength);
+		majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
+
+		majorSalary10=(majorSalary10/majorLength);
+		majorSalary25=(majorSalary25/majorLength);
+		majorSalary50=(majorSalary50/majorLength);
+		majorSalary75=(majorSalary75/majorLength);
+		majorSalary90=(majorSalary90/majorLength);
+		majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
+
+	}
+
+	if(ID == null){
+		majorVQRBuff=majorVQR;
+		majorLength=0;
+		for (var i = 0; i < major_character_requirement.length; i++) {
+			if(major_character_requirement[i].SAT10 != 0){
+				majorSAT10+=major_character_requirement[i].SAT10;
+				majorSAT25+=major_character_requirement[i].SAT25;
+				majorSAT50+=major_character_requirement[i].SAT50;
+				majorSAT75+=major_character_requirement[i].SAT75;
+				majorSAT90+=major_character_requirement[i].SAT90;
+				majorLength++;
+			}
+			
+		};
+
+		majorSAT10=parseInt(majorSAT10/majorLength);
+		majorSAT25=parseInt(majorSAT25/majorLength);
+		majorSAT50=parseInt(majorSAT50/majorLength);
+		majorSAT75=parseInt(majorSAT75/majorLength);
+		majorSAT90=parseInt(majorSAT90/majorLength);
+		majorSAT.push(majorSAT10,majorSAT25, majorSAT50, majorSAT75,majorSAT90);
+
+
+		for (var i = 0; i < major_character_requirement.length; i++) {
+			if(major_character_requirement[i].GPA10 != 0){
+				majorGPA10+=major_character_requirement[i].GPA10;
+				majorGPA25+=major_character_requirement[i].GPA25;
+				majorGPA50+=major_character_requirement[i].GPA50;
+				majorGPA75+=major_character_requirement[i].GPA75;
+				majorGPA90+=major_character_requirement[i].GPA90;
+			}
+		};
+		majorGPA10=majorGPA10/majorLength;
+		majorGPA25=majorGPA25/majorLength;
+		majorGPA50=majorGPA50/majorLength;
+		majorGPA75=majorGPA75/majorLength;
+		majorGPA90=majorGPA90/majorLength;
+		majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
+
+
+		for (var i = 0; i < major_character_requirement.length; i++) {
+			if(major_character_requirement[i].salary10 != 0){
+				majorSalary10+=major_character_requirement[i].salary10;
+				majorSalary25+=major_character_requirement[i].salary25;
+				majorSalary50+=major_character_requirement[i].salary50;
+				majorSalary75+=major_character_requirement[i].salary75;
+				majorSalary90+=major_character_requirement[i].salary90;
+			}
+		};
+		majorSalary10=parseInt(majorSalary10/majorLength);
+		majorSalary25=parseInt(majorSalary25/majorLength);
+		majorSalary50=parseInt(majorSalary50/majorLength);
+		majorSalary75=parseInt(majorSalary75/majorLength);
+		majorSalary90=parseInt(majorSalary90/majorLength);
+		majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
+
+	}
+/*
+    majorVQRBar.selectAll("rect").transition().duration(500)
+    	.attr("y", function (d,i,j){return (i * 70) + 50 +30;})
+		.attr("height",function (d,i,j) { return 0;});
+
+	d3.selectAll(".majorVQRBar").remove();
+
+
+	majorVQRBar=svg.selectAll(".majorVQRBar")
+        .data(majorVQRBuff)
+        .enter().append("g")
+        .attr("class","majorVQRBar");
+
+    majorVQRBar.selectAll("rect") // these
+        .data(function (d,i,j) {return d;}) //lines;   
+        .enter() //text displays normally
+        .append("rect")
+        .attr("x",function (d,i,j) { return 93-160+ d*172; })
+        .attr("y",function (d,i,j) { return (i * 70) + 50; })
+        .attr("height",function (d,i,j) { return 0;})
+        .attr("width",1)
+        .style("opacity",0)
+        .style("fill", heatColor[0]);
+
+    majorVQRBar.selectAll("rect").transition().duration(500)
+		.style("opacity",0.9)
+		.attr("height",function (d,i,j) { return 40;});*/
+	majorSATbar.select("rect").transition().duration(500)
+		.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
+		.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+
+	majorGPAbar.select("rect").transition().duration(500)
+		.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
+		.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
+
+	majorSalarybar.select("rect").transition().duration(500)
+		.attr("x",function(d,i){return MSalary_relevantX +33+ (majorSalary[i]-10000)*0.0023;})
+		.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
+};
+
+function occupationCharacterChange(ID){
+
+
+	var occupationVQRBuff=[];
+	var occupationSalary=[];
+
+	var occupationSalary10=0;
+	var occupationSalary25=0;
+	var occupationSalary50=0;
+	var occupationSalary75=0;
+	var occupationSalary90=0;
+	var occupationLength=0;
+
+	if(ID !=null){
+	    for (var i = 0; i < occupation_character_requirement.length; i++) {
+	    	if(occupation_character_requirement[i].occupationGroup == ID){
+	    		occupationLength++;
+	    		occupationVQRBuff.push([occupation_character_requirement[i].verbalSkill, occupation_character_requirement[i].quantitativeSkill, occupation_character_requirement[i].reasoningSkill]);
+
+
+	    			occupationSalary10+=(occupation_character_requirement[i].salary10==0?occupation_character_requirement[i].salary25-(initoccupationSalary[1]-initoccupationSalary[0]):occupation_character_requirement[i].salary10);
+					occupationSalary25+=occupation_character_requirement[i].salary25;
+					occupationSalary50+=occupation_character_requirement[i].salary50;
+					occupationSalary75+=occupation_character_requirement[i].salary75;
+					occupationSalary90+=(occupation_character_requirement[i].salary90==0?occupation_character_requirement[i].salary75+(initoccupationSalary[4]-initoccupationSalary[3]):occupation_character_requirement[i].salary90);
+	    		
+	    	}
+	    };
+
+	    occupationSalary10=(occupationSalary10/occupationLength);
+		occupationSalary25=(occupationSalary25/occupationLength);
+		occupationSalary50=(occupationSalary50/occupationLength);
+		occupationSalary75=(occupationSalary75/occupationLength);
+		occupationSalary90=(occupationSalary90/occupationLength);
+		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
+
+	}
+
+	if(ID == null){
+		occupationVQRBuff=occupationVQR;
+
+		for (var i = 0; i < occupation_character_requirement.length; i++) {
+			if(occupation_character_requirement[i].salary10 != 0){
+				occupationSalary10+=occupation_character_requirement[i].salary10;
+				occupationSalary90+=occupation_character_requirement[i].salary90;
+				occupationSalary75+=occupation_character_requirement[i].salary75;
+				occupationSalary25+=occupation_character_requirement[i].salary25;
+				occupationSalary50+=occupation_character_requirement[i].salary50;
+				occupationLength++;
+			}
+		};
+		occupationSalary10=parseInt(occupationSalary10/occupationLength);
+		occupationSalary25=parseInt(occupationSalary25/occupationLength);
+		occupationSalary50=parseInt(occupationSalary50/occupationLength);
+		occupationSalary75=parseInt(occupationSalary75/occupationLength);
+		occupationSalary90=parseInt(occupationSalary90/occupationLength);
+		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
+		console.log(occupationSalary)
+	}
+
+/*
+    occupationVQRBar.selectAll("rect").transition().duration(500)
+    	.attr("y", function (d,i,j){return (i * 70) + 50 +30;})
+		.attr("height",function (d,i,j) { return 0;})
+		;
+
+	d3.selectAll(".occupationVQRBar").remove();
+
+
+	occupationVQRBar=svg.selectAll(".occupationVQRBar")
+        .data(occupationVQRBuff)
+        .enter().append("g")
+        .attr("class","occupationVQRBar");
+
+    occupationVQRBar.selectAll("rect") // these
+        .data(function (d,i,j) {return d;}) //lines;   
+        .enter() //text displays normally
+        .append("rect")
+        .attr("x",function (d,i,j) { return 943+ d*172; })
+        .attr("y",function (d,i,j) { return (i * 70) + 50; })
+        .attr("height",function (d,i,j) { return 0;})
+        .attr("width",1)
+        .style("opacity",0)
+        .style("fill", heatColor[0]);
+
+    occupationVQRBar.selectAll("rect").transition().duration(500)
+		.style("opacity",0.9)
+		.attr("height",function (d,i,j) { return 40;});*/
+
+	
+};
+
+//calculate RGB color for bars, VQR:0.0~1.0
+//var colorRange=["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"];
+
+//red - blue
+var colorRange=["#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4"];
+var colorScale=d3.scaleQuantile().range(colorRange).domain([-1,1]);
+
+function calculateVQRcolor(ID){
+	var VQRBuff=[];
+	var characters={verbal:0,quantitative:0,length:0};
+	var vScore,qScore,eucliDis,BrightScale=0;
+	
+	if(search_click && current == "major"){
+		for (var i = 0; i < ID.length; i++){
+	    	for  (var j = 0; j < major_character_requirement.length; j++){
+	    		if(major_character_requirement[j].major == ID[i]){
+	    			vScore=major_character_requirement[j].verbalSkill;
+	    			qScore=major_character_requirement[j].quantitativeSkill;
+	    			eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    			BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
+	    			VQRBuff.push(BrightScale(eucliDis));
+	    		}
+	    	}
+	    }
+	    current = '';
+	}
+
+	if(search_click && current == "occupation"){
+		for (var i = 0; i < ID.length; i++){
+	    	for  (var j = 0; j < occupation_character_requirement.length; j++){
+	    		if(occupation_character_requirement[j].occupation == ID[i]){
+	    			vScore=occupation_character_requirement[j].verbalSkill;
+	    			qScore=occupation_character_requirement[j].quantitativeSkill;
+	    			eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    			BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
+	    			VQRBuff.push(BrightScale(eucliDis));
+	    		}
+	    	}
+	    }
+	    current = '';
+	}
+
+	//initial color calculation
+	if (ID != null && current == null) {
+		if (ifCollege) {		
+			for (var i = 0; i < major_character_requirement.length; i++) {
+		    	if(major_character_requirement[i].college == ID){
+		    		characters.verbal += major_character_requirement[i].verbalSkill;
+		    		characters.quantitative += major_character_requirement[i].quantitativeSkill;
+		    		characters.length += 1;
+		    	}
+		    }
+		}
+		
+		if(!ifCollege){
+			for (var i = 0; i < occupation_character_requirement.length; i++) {
+		    	if(occupation_character_requirement[i].occupationGroup == ID){
+		    		characters.verbal += occupation_character_requirement[i].verbalSkill;
+		    		characters.quantitative += occupation_character_requirement[i].quantitativeSkill;
+		    		characters.length += 1;
+		    	}
+
+		    }
+		}
+
+		vScore = characters.verbal/characters.length;
+		qScore = characters.quantitative/characters.length;
+	    eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1]);
+	    VQRBuff = BrightScale(eucliDis);
+	    //VQRBuff.push(colorScale((qScore-vScore)*4));
+	}
+
+	if(ID != null && current =='college'){
+	    for (var i = 0; i < major_character_requirement.length; i++) {
+	    	if(major_character_requirement[i].college == ID){
+
+	    		vScore=major_character_requirement[i].verbalSkill;
+	    		qScore=major_character_requirement[i].quantitativeSkill;
+
+	    		eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    		BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
+
+
+	    		VQRBuff.push(BrightScale(eucliDis));
+	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
+
+	    	}
+	    }
+
+
+	}
+
+	
+	if(ID != null && current =='occupationGroup'){
+	    for (var i = 0; i < occupation_character_requirement.length; i++) {
+	    	if(occupation_character_requirement[i].occupationGroup == ID){
+	    		var vScore=occupation_character_requirement[i].verbalSkill;
+	    		var qScore=occupation_character_requirement[i].quantitativeSkill;
+
+	    		var eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    		var BrightScale=d3.scaleLinear().range(["#dddddd",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
+
+
+	    		VQRBuff.push(BrightScale(eucliDis));
+	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
+	    	}
+	    }
+	}
+
+
+/*
+	if(search_click){
+		for (var i = 0; i < occupation_character_requirement.length; i++) {
+	    	if(occupation_character_requirement[i].occupationGroup == ID){
+	    		var vScore=occupation_character_requirement[i].verbalSkill;
+	    		var qScore=occupation_character_requirement[i].quantitativeSkill;
+
+	    		var eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
+	    		var BrightScale=d3.scaleLinear().range(["#ffffff",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
+
+
+	    		VQRBuff.push(BrightScale(eucliDis));
+	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
+	    	}
+	    }
+	}*/
+	return VQRBuff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//mapping(main part)
+
+function draw_path(left, right, number, left_list, left_number, left_x, left_y, left_length, right_list, right_number, right_x, right_y, right_length, color_style){
+
+	d3.selectAll(".mainPath").remove();
+	var VQRcolor;
+	if (current != '') {
+		VQRcolor = calculateVQRcolor(this.idBuff);
+	}
+	else{
+		if(college_click == '?' && occupationGroup_click == '?'){
+			VQRcolor=collegeColor;
+		}
+
+		if(college_click==true){
+			current='college';
+			VQRcolor=calculateVQRcolor(college.click);
+		}
+		else if(occupationGroup_click==true){
+			current='occupationGroup';
+			VQRcolor=calculateVQRcolor(occupationGroup.click);
+		}
+		if(search_click){
+			current ="major";
+			VQRcolor=calculateVQRcolor(major.name);
+		}
+	}
+
+	var test=[0];
+	var mainPath = svg.selectAll(".mainPath")
+		.data(test)
+		.enter().append("g")
+		.attr("class","mainPath");
+
+
+	minn = (searchName!=null)?5:10;
+	gap=2;
+	height=40;
+
+
+	path_left_name_list = [];
+	path_right_name_list = [];
+	path_left_name_list = left_list;
+	path_right_name_list = right_list;
+	
+	var right_current = [];
+	var right_width = [];
+	var left_width = [];
+	var left_current = [];
+
+	
+	//calculating the right width and right current
+	var total=1; //avoid the final total equals to 0
+	for(var i=0;i< right_number.length;i++)
+	     total=total+right_number[i];
+	var scale=(right_length-minn*right_number.length -(right_number.length-1)*gap)/total;
+	
+	for (var i=0;i< right_list.length;i++)
+	{
+		right_width[i]= minn + scale*right_number[i];
+		if(i == 0)
+		 {   right_current[i] = right_y;}
+		else
+		  {  right_current[i]=right_current[i-1]+gap+right_width[i-1];}
+	}
+	// calculating the left width and left current
+    total=1; //avoid the final total equals to 0
+	for(var i=0;i< left_number.length;i++)
+	    total=total+left_number[i];
+    scale=(left_length-minn*left_number.length -(left_number.length-1)*gap)/total;
+	
+    for (var i=0;i< left_list.length;i++)
+	{
+		left_width[i]= minn + scale*left_number[i];
+		if(i == 0 )
+		 {   left_current[i]=left_y; }
+		else
+		{    left_current[i]=left_current[i-1]+gap+left_width[i-1];}
+	}
+
+	//draw path
+
+
+
+	for(var i=0;i< left_list.length;i++){
+		for(var j=0;j< right_list.length;j++){
+			first_y=left_current[i];
+			first_x=left_x+height;
+
+			
+			
+			left_right_num=0;
+			for(var k=0;k< left.length;k++){
+				if(left[k] == left_list[i] && right[k] == right_list[j]){
+					left_right_num = number[k];
+					break;
+				}
+			}
+			if (left_right_num > 0){
+				left_current[i]=left_current[i]+left_right_num*left_width[i]/left_number[i];
+				fourth_y=left_current[i];
+				fourth_x=left_x+height;
+				
+				second_y=right_current[j];
+				second_x=right_x;
+				
+				right_current[j]=right_current[j]+left_right_num*right_width[j]/right_number[j];
+				third_y=right_current[j];
+				third_x=right_x;
+
+
+				poly = [first_x,first_y,second_x,second_y,third_x,third_y,fourth_x,fourth_y];
+
+
+				var color;
+				if(i<10)
+					color=collegeColor[i];
+				else{
+					var num=Math.floor((Math.random() * 5) + 5);
+					color=collegeColor[num];
+				}
+				
+				
+				mainPath.append("polygon")
+					.attr("points",function (d){return poly;})
+				    .style("fill",function (d){
+
+				    	if (current =='') {
+				    		if(college_click){
+				    			return VQRcolor[i];
+				    		}
+
+				    		
+				    	}
+				    	else {
+				    		if (current == 'college') {
+				    			return VQRcolor[i];
+				    		}
+				    		if (current == 'occupationGroup') {
+				    			return VQRcolor[j];
+				    		}
+				    	}
+				    		
+				    })
+				    .attr("id",function(d){
+				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
+				    		return college.name[i].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
+				    		
+				    })
+				    .attr("ogid",function(d){
+				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
+				    		return occupationGroup.name[j].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
+				    		
+				    })
+				    .attr("cid",function(d){
+				    	if(college.click != "?" || search_click)
+					    	return major.name[i].replace(/\s/g, '').replace(/','/g,'').replace(/ /g,'');
+				    })
+				    .attr("oid",function(d){
+				    	if(occupationGroup.click != "?" || search_click)
+				    		return occupation.name[j].replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+				    })
+				    .attr("textnum",function(d){
+				    	return left_right_num;
+				    })
+				    /*
+				    .on("mouseover", function(d) {
+			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
+			            d3.select(this).style("fill-opacity",0.9);
+			            textY=(this.points[0].y+this.points[2].y)/2;
+
+			            mainPath.append("circle")
+			            	.attr("cx", (first_x+second_x)/2)
+	                       .attr("cy", textY-5)
+	                       .attr("r", 30)
+	                       .style("fill", "white")
+	                       .style("fill-opacity",0.4);
+
+			            mainPath.append("text")
+			            	.text(d3.select(this).attr("textnum"))
+			            	.style("fill","white")
+			            	.style("font-size",20)
+							.style("font-weight","bold")						            	
+			            	.style("stroke","black")
+			            	.style("stroke-width",1)
+			            	.style("fill-opacity",1)
+			            	.attr("x",(first_x+second_x)/2-15)
+			            	.attr("y",textY);
+			        })
+			        .on("mouseout", function(d) {
+			            
+			            mainPath.selectAll("text").remove();
+			            mainPath.selectAll("circle").remove();
+			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
+			        })*/
+				    .style("fill-opacity",0)
+				    .attr("class","mainPath");
+
+				mainPath.append("text").text("");
+
+
+			
+			}
+		}
+	};
+
+	d3.selectAll(".mainPath").transition().duration(animationTime)//1000
+		.style("fill-opacity",0.4);     
+};
+
+
+//Draw edges functions: 2
+//draw main edges
+function find_college_occupationGroup(){
+	college_click = '?';
+	occupationGroup_click = '?';
+
+	var hr = new XMLHttpRequest();
+	hr.open("POST", url, true);
+	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
+
+    hr.onreadystatechange = function() {
+	    if(hr.readyState == 4 && hr.status == 200) {
+			///
+			
+			var x=hr.responseText.split("*");
+            var num1= parseInt(x[0]);
+			
+			education_job.education = [];
+			education_job.job = [];
+			education_job.number = [];
+			var k =1 ;
+			for (var i=0;i < num1;i++)
+			{
+		        education_job.education.push(x[k]);
+				k=k+1;
+				education_job.job.push(x[k]);
+				k=k+1;
+				education_job.number.push(parseInt(x[k]));
+				k=k+1;
+			}
+
+			draw_path(education_job.education,education_job.job, education_job.number,
+				      college.name,college.number, relevantX - 10, collegeX[0],  620, 
+ 					  occupationGroup.name,occupationGroup.number, relevantX + 290 ,occupationGroupX[0],620,
+ 					  college.style);
+
+
+		}
+	}
+};
+
+//draw different hierachical edges
+function find_major_occupation(college_click, occupationGroup_click, startpoint,style,subbarColor){
+			
+	college_click=college_click;
+	occupationGroup_click=occupationGroup_click;
+
+	if(!college_click)
+		college_click='?';
+	if(!occupationGroup_click)
+		occupationGroup_click='?';
+
+	var hr = new XMLHttpRequest();
+	hr.open("POST", url, true);
+	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    hr.onreadystatechange = function() {
+	    if(hr.readyState == 4 && hr.status == 200) {
+			///
+			var x=hr.responseText.split("*");
+			
+			var num1= parseInt(x[0]);
+			var num2= parseInt(x[num1*2+1]);
+			var num3= parseInt(x[num1*2+1+num2*2+1]);
+
+			major.name = [];
+			major.number = [];
+			major.style = [];
+			major.opacity = [];
+			major.character = [];
+			major.college = [];
+
+			occupation.name = [];
+			occupation.number = [];
+			occupation.style = [];
+			occupation.opacity = [];
+			occupation.character = [];
+			occupation.occupationGroup = [];
+			
+			education_job.education = [];
+			education_job.job = [];
+			education_job.number = [];
+
+			
+			
+
+			//judge the conditions of college,major to occupationGroup,occupation
+			if(college_click!='?' && occupationGroup_click=='?'){			
+				var k=1;
+				k=calculateMajor(num1,x,k,college_click);
+
+				k=k+1;
+				k=calculateMajorToOccupation(num2,x,k,college_click,occupationGroup_click);
+			}
+			else if(college_click=='?' && occupationGroup_click!='?'){			
+				var k=1;
+				k=calculateOccupation(num1,x,k,college_click);
+
+				k=k+1;
+				k=calculateMajorToOccupation(num2,x,k,college_click,occupationGroup_click);
+				
+			}
+			else if(college_click!='?' && occupationGroup_click!='?'){			
+				var k=1;
+				k=calculateMajor(num1,x,k,college_click);
+
+				k+=1;
+				k=calculateOccupation(num2,x,k,college_click);
+
+				k=k+1;
+				k=calculateMajorToOccupation(num3,x,k,college_click,occupationGroup_click);
+			}
+
+			
+			if(college_click != college_click_buff){
+				create_major_bar(major,startpoint, style,subbarColor);	
+				college_click_buff=college_click; 
+			}			  	
+			if (occupationGroup_click != occupationGroup_click_buff){
+				create_occupation_bar(occupation,startpoint,style,subbarColor);	
+				 occupationGroup_click_buff=occupationGroup_click;
+
+			}
+
+
+			//major to occupationGroup
+			if(college_click!='?' && occupationGroup_click=='?'){
+				draw_path(education_job.education,education_job.job, education_job.number,
+			        major.name, major.number, relevantX - 12.5, majorX[0],  458, 
+					    occupationGroup.name,occupationGroup.number, relevantX + 289.5 ,occupationGroupX[0],620,
+					    college.style);
+				}
+
+				//college to occupation
+			if(college_click=='?' && occupationGroup_click!='?'){
+				draw_path(education_job.education,education_job.job, education_job.number,
+			        college.name, college.number, relevantX - 10, collegeX[0],  620, 
+					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
+					    college.style);
+			}
+
+			//major to occupation
+			if(college_click!='?' && occupationGroup_click!='?'){
+				draw_path(education_job.education,education_job.job, education_job.number,
+			        major.name, major.number, relevantX - 12.5, majorX[0],  458, 
+					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
+					    college.style);
+			}
+	    }
+	}
+	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
+	//hr.send("major="+null+"&occupation="+null);	
+};
+
 //Calculate Major/Occupation functions: 3
 function calculateMajor(n,x,k, college_click){
 	for(var i=0; i < n; i++)
@@ -3427,8 +3592,9 @@ function calculateOccupation(n,x,k,college_click){
 				});
 		}	
 	}
-	return k;
+	return k;         	
 };
+
 
 function calculateMajorToOccupation(n,x,k,college_click,occupationGroup_click){
 
@@ -3496,7 +3662,7 @@ function calculateMajorToOccupation(n,x,k,college_click,occupationGroup_click){
         }
     }
     
-    return k;
+    //return k;
 };
 
 
