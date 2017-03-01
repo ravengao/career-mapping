@@ -1799,14 +1799,11 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.transition(200000)
 			.duration(animationTime)
 			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
 			.attr("height", function(d) {
-				   		if(i<13)return (d.salary75-d.salary25) * 0.002;
-            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.002;
+				   		if(i<13)return (d.salary75-d.salary25) * 0.0010;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.0010;
             			else if(i>=26&&i<39) return 2;
-            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.002;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.0010;
 				   })
 			.attr("x",function(d) {
 				if(i<13)return chart_base_x+w / 80*i;
@@ -1822,7 +1819,6 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.transition(200000) 
 		    .duration(animationTime)
 			.delay(500) 
-			.style("fill","red")
 			.attr("height", function(d) {
 				   		return 0;
 				   })
@@ -1835,14 +1831,11 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.transition(200000)
 			.duration(animationTime)
 			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i%13]];
-				   }) 
 			.attr("height", function(d) {
-				   		if(i<13)return (d.salary75-d.salary25) * 0.002;
-            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.002;
+				   		if(i<13)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.0015;
             			else if(i>=26&&i<39) return 2;
-            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.002;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.0015;
 				   })
 			.attr("x",function(d) {
 				if(i<13)return chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80;
@@ -1864,9 +1857,9 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.delay(500) 
 			.attr("fill", function() {
 				if(i<117)return subbarColor[i%117-min];
-            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117&&i<117*2) return subbarColor[i%117-min];
             	else if(i>=117*2&&i<117*3) return "black";
-            	else if(i>=117*3&&117*4) return "black";
+            	else if(i>=117*3&&117*4) return subbarColor[i%117-min];
 				   })
 			.attr("x",function(d) {
 				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min) * (w-w / 80*26) / 28;
@@ -1883,10 +1876,10 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
             	
 			 }) 
 			.attr("height", function(d) {
-				   		if(i<117)return (d.salary75-d.salary25) * 0.002;
-            			else if(i>=117&&i<117*2) return (d.salary90-d.salary75)* 0.002;
+				   		if(i<117)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=117&&i<117*2) return (d.salary90-d.salary75)* 0.0015;
             			else if(i>=117*2&&i<117*3) return 2;
-            			else if(i>=117*3&&i<117*4) return (d.salary25-d.salary10)* 0.002;
+            			else if(i>=117*3&&i<117*4) return (d.salary25-d.salary10)* 0.0015;
 				   });
 			}
 		if (i%117 < min) {
@@ -1897,9 +1890,9 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.delay(500) 
 			.attr("fill", function() {
 				if(i<117)return subbarColor[i%117-min];
-            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117&&i<117*2) return subbarColor[i%117-min];
             	else if(i>=117*2&&i<117*3) return "black";
-            	else if(i>=117*3&&117*4) return "black";
+            	else if(i>=117*3&&117*4) return subbarColor[i%117-min];
 				   })
 			.attr("x",function(d) {
 				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
@@ -1931,9 +1924,9 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.delay(500) 
 			.attr("fill", function() {
 				if(i<117)return subbarColor[i%117-min];
-            	else if(i>=117&&i<117*2) return "black";
+            	else if(i>=117&&i<117*2) return subbarColor[i%117-min];
             	else if(i>=117*2&&i<117*3) return "black";
-            	else if(i>=117*3&&117*4) return "black";
+            	else if(i>=117*3&&117*4) return subbarColor[i%117-min];
 				   })
 			.attr("x",function(d) {
 				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
@@ -2282,6 +2275,61 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 			.attr("x",chart_base_x+i * (w / occupationaverageHoursOfWorkOrWeek.number.length))
 			.attr("width", w / occupationaverageHoursOfWorkOrWeek.number.length - 1);
 			
+		}
+		//suboccupationsalary
+		for (var i = 0; i < 13*4; i++) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		if(i<13)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.0015;
+            			else if(i>=26&&i<39) return 2;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.0015;
+				   })
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+i * (w / Salarybarlength);
+            	else if(i>=13&&i<26) return chart_base_x+(i-13+0.5) * (w / Salarybarlength)-0.5-1;
+            	else if(i>=26&&i<39) return chart_base_x+(i-26) * (w / Salarybarlength);
+            	else if(i>=39&&i<52) return chart_base_x+(i-39+0.5) * (w / Salarybarlength)-0.5-1;
+			})
+			.attr("width", function(d, i) { 
+            if(i<13) return w / Salarybarlength - 1;
+            else if(i>=13&&i<26) return 2;
+            else if(i>=26&&i<39) return (w / Salarybarlength) - 1;
+            else if(i>=39&&i<52) return 2;
+          	});
+		}
+		for (var i = 0; i < 117*4; i++) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return 0;
+            			else if(i>=117&&i<117*2) return 0;
+            			else if(i>=117*2&&i<117*3) return 0;
+            			else if(i>=117*3&&i<117*4) return 0;
+			});
+
+
 		}
 	}
 
@@ -4038,7 +4086,7 @@ function changeScatterplot(ID){
 	}
 	if(current == "occupationGroup"){
 		ID=ID.replace(/\s/g,'').replace(/\//g,'');
-		d3.selectAll(".occupationDot").style("fill-opacity",0.3).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").style("fill-opacity",0.1).attr("stroke-width",0);
 	d3.select("#occupationScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");	

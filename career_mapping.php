@@ -21,6 +21,9 @@
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
   <script type="text/javascript" src="js/jquery.youtubepopup.min.js"></script>
   <script src="career-mapping.js"></script>
+
+  <link rel="stylesheet" type="text/css"
+      href="https://fonts.googleapis.com/css?family=Charcoal">
 </head>
 
 
@@ -103,6 +106,7 @@
         var accordion_panel_width = 300;
         var accordion_panel_height = 130;//180
         var chart_base_x=1050;
+        var chart_base_xl=-130;
         var chart_base_y=accordion_bar_y + 30;//80
         var svg = d3.select("#mySVG").append("g");
 
@@ -410,10 +414,13 @@ var occupationhispanicPercent = {
 
   // character parameters 
   var major_character_requirement = [];
+  var major_character_meanrequirement = [];
   var occupation_character_requirement = [];
+  var occupation_character_meanrequirement = [];
   var college_character_range = [];
   var occupation_character_range = [];
   var occupationGroup_character_range = [];
+
 
   // store the existing fullname displayed on two sides
   var fullname_education = [];
@@ -850,7 +857,11 @@ while($rows = mysqli_fetch_assoc($result))
          ?>
   <!--  extract major character requirement -->
   <?php
-  $sql ="SELECT major, college, observations, verbalSkill, quantitativeSkill, reasoningSkill, percentFemale, salary10thPercentile, salary25thPercentile, salaryMedian, salary75thPercentile, salary90thPercentile, SAT10thPercentile,SAT25thPercentile, SATMedian, SAT75thPercentile, SAT90thPercentile, purdueGPA10thPercentile, purdueGPA25thPercentile, purdueGPAMedian, purdueGPA75thPercentile, purdueGPA90thPercentile, description from MajorCha042016  group by major, college";
+  $sql ="SELECT major, college, observations, verbalSkill, quantitativeSkill, reasoningSkill, percentFemale, 
+  salary10thPercentile, salary25thPercentile, salaryMedian, salary75thPercentile, salary90thPercentile,
+  SAT10thPercentile,SAT25thPercentile, SATMedian, SAT75thPercentile, SAT90thPercentile, 
+  purdueGPA10thPercentile, purdueGPA25thPercentile, purdueGPAMedian, purdueGPA75thPercentile, purdueGPA90thPercentile, 
+  description from MajorCha042016 where salary90thPercentile-salary75thPercentile>0 and salary25thPercentile-salary10thPercentile>0 group by major, college";
   $result = $link->query($sql);
   if ($result->num_rows <= 0) {
        echo "0 results";
@@ -896,10 +907,81 @@ while($rows = mysqli_fetch_assoc($result))
   <?php
  }
      ?>
+<!--  extract major character mean requirement -->
+  <?php
+  $sql ="SELECT major, college, observations, verbalSkill, quantitativeSkill, reasoningSkill, percentFemale,
+  sum(salary10thPercentile*observations)/sum(observations) as salary10,
+  sum(salary25thPercentile*observations)/sum(observations) as salary25,
+  sum(salaryMedian*observations)/sum(observations) as salary50,
+  sum(salary75thPercentile*observations)/sum(observations) as salary75,
+  sum(salary90thPercentile*observations)/sum(observations) as salary90,
+
+  sum(SAT10thPercentile*observations)/sum(observations) as SAT10,
+  sum(SAT25thPercentile*observations)/sum(observations) as SAT25,
+  sum(SATMedian*observations)/sum(observations) as SAT50,
+  sum(SAT75thPercentile*observations)/sum(observations) as SAT75,
+  sum(SAT90thPercentile*observations)/sum(observations) as SAT90,
+
+  sum(purdueGPA10thPercentile*observations)/sum(observations) as GPA10,
+  sum(purdueGPA25thPercentile*observations)/sum(observations) as GPA25,
+  sum(purdueGPAMedian*observations)/sum(observations) as GPA50,
+  sum(purdueGPA75thPercentile*observations)/sum(observations) as GPA75,
+  sum(purdueGPA90thPercentile*observations)/sum(observations) as GPA90,
+  description from MajorCha042016 where salary90thPercentile-salary75thPercentile>0 and salary25thPercentile-salary10thPercentile>0  group by college";
+  $result = $link->query($sql);
+  if ($result->num_rows <= 0) {
+       echo "0 results";
+     }
+   while($rows = mysqli_fetch_assoc($result))
+  {
+    ?>
+  <script>
+    major_character_meanrequirement.push({
+
+    major: "<?php echo($rows["major"]); ?>",
+    college: "<?php echo($rows["college"]); ?>",
+    observations: parseInt("<?php echo($rows["observations"]); ?>"),
+
+      verbalSkill: parseFloat("<?php echo($rows["verbalSkill"]); ?>"),
+    quantitativeSkill: parseFloat("<?php echo($rows["quantitativeSkill"]); ?>"),
+    reasoningSkill: parseFloat("<?php echo($rows["reasoningSkill"]); ?>"),
+
+    femalePercent: parseFloat("<?php echo($rows["femalePercent"]); ?> "),
+    salary10: parseInt("<?php echo($rows["salary10"]); ?>"),
+    salary25: parseInt("<?php echo($rows["salary25"]); ?>"),
+    salary50: parseInt("<?php echo($rows["salary50"]); ?>"),
+    salary75: parseInt("<?php echo($rows["salary75"]); ?>"),
+    salary90: parseInt("<?php echo($rows["salary90"]); ?>"),
+
+    SAT10: parseInt("<?php echo($rows["SAT10"]); ?>"),
+    SAT25: parseInt("<?php echo($rows["SAT25"]); ?>"),
+    SAT50: parseInt("<?php echo($rows["SAT50"]); ?>"),
+    SAT75: parseInt("<?php echo($rows["SAT75"]); ?>"),
+    SAT90: parseInt("<?php echo($rows["SAT90"]); ?>"),
+
+    GPA10: parseFloat("<?php echo($rows["GPA10th"]); ?>"),
+    GPA25: parseFloat("<?php echo($rows["GPA25th"]); ?>"),
+    GPA50: parseFloat("<?php echo($rows["GPA50"]); ?>"),
+    GPA75: parseFloat("<?php echo($rows["GPA75th"]); ?>"),
+    GPA90: parseFloat("<?php echo($rows["GPA90th"]); ?>"),
+    
+    description: "<?php echo($rows["description"]); ?>",
+  
+  });
+
+    </script>
+  <?php
+ }
+     ?>
   <!--  extract occupation character requirement -->
   <?php 
   /* extract occupation character requirement*/
-  $sql ="select occupation, occupationGroup, observations, verbalSkill, quantitativeSkill, reasoningSkill, femalePercent, salary10thPercentile, salary25thPercentile, salaryMedian, salary75thPercentile, salary90thPercentile, description from  OccupationCha042016 group by occupation, occupationGroup";//OccupationCha042016
+  $sql ="select occupation, occupationGroup, observations, verbalSkill, quantitativeSkill, reasoningSkill, femalePercent, 
+  salary10thPercentile, 
+  salary25thPercentile, 
+  salaryMedian, 
+  salary75thPercentile,
+  salary90thPercentile, description from  OccupationCha042016 group by occupation, occupationGroup";//OccupationCha042016
   $result = $link->query($sql);
   if ($result->num_rows <= 0) {
        echo "0 results";
@@ -932,7 +1014,47 @@ while($rows = mysqli_fetch_assoc($result))
  }
      ?>
 
+<!--  extract mean occupation character requirement -->
+  <?php 
+  /* extract occupation character requirement*/
+  $sql ="select occupation, occupationGroup, observations, verbalSkill, quantitativeSkill, reasoningSkill, femalePercent,
+   sum(salary10thPercentile*observations)/sum(observations) as salary10th, 
+   sum(salary25thPercentile*observations)/sum(observations) as salary25th, 
+   sum(salaryMedian*observations)/sum(observations) as salary50th, 
+   sum(salary75thPercentile*observations)/sum(observations) as salary75th, 
+   sum(salary90thPercentile*observations)/sum(observations) as salary90th, 
+   description from  OccupationCha042016 group by occupationGroup";//OccupationCha042016
+  $result = $link->query($sql);
+  if ($result->num_rows <= 0) {
+       echo "0 results";
+     }
+   while($rows = mysqli_fetch_assoc($result))
+  {
+    ?>
+  <script>
+  occupation_character_meanrequirement.push({
+  occupation: "<?php echo($rows["occupation"]); ?>",
+  occupationGroup: "<?php echo($rows["occupationGroup"]); ?>",
 
+  observations: parseInt("<?php echo($rows["observations"]); ?>"),
+    verbalSkill: parseFloat("<?php echo($rows["verbalSkill"]); ?>"),
+  quantitativeSkill: parseFloat("<?php echo($rows["quantitativeSkill"]); ?>"),
+  reasoningSkill: parseFloat("<?php echo($rows["reasoningSkill"]); ?>"),
+
+  femalePercent: parseFloat("<?php echo($rows["femalePercent"]*0.01); ?>"),
+
+  salary10: parseInt("<?php echo($rows["salary10th"]); ?>"),
+  salary25: parseInt("<?php echo($rows["salary25th"]); ?>"),
+  salary50: parseInt("<?php echo($rows["salary50th"]); ?>"),
+  salary75: parseInt("<?php echo($rows["salary75th"]); ?>"),
+  salary90: parseInt("<?php echo($rows["salary90th"]); ?>"),
+  description: "<?php echo($rows["description"]); ?>",
+
+  });
+    </script>
+  <?php
+ }
+     ?>
 <script type="text/javascript">
 
   var margin = { top: 130, right: 0, bottom: 100, left: 150 },
@@ -953,11 +1075,16 @@ while($rows = mysqli_fetch_assoc($result))
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
       var color=[];
+      var color2=[];
     for(var i=0; i< occupationautomation.number.length;i++)
     {
       color[i]=calculateVQRcolor(occupationGroup.name[i]);
     }
-
+    for(var i=0; i< college.name.length;i++)
+    {
+      color2[i]=calculateVQRcolor(college.name[i]);
+    }
+    
 // below are the old VQR bars
 
   //create character bars: 1.verbal, quatitative, reasoning
@@ -1161,50 +1288,156 @@ while($rows = mysqli_fetch_assoc($result))
 
 
 //left part start
+//major Salary
 
-  //SAT
-  var SAT_relevantX = accordion_bar_xl-130;
-  var SAT_relevantY = accordion_bar_y+23;
+ //major Salary
 
+  var w = 250;
+  var h = 100;
+  var barnumber = 1;
+  var Salarybarlength = major_character_meanrequirement.length;
+  console.log(major_character_meanrequirement);
+  major_character_meanrequirement= (major_character_meanrequirement.concat(major_character_meanrequirement));//2 dataset 
+  major_character_meanrequirement= (major_character_meanrequirement.concat(major_character_meanrequirement));//3 dataset 
+  major_character_meanrequirement= (major_character_meanrequirement.concat(major_character_meanrequirement));//4 dataset 
   
+  var majorSalarybar=svg.selectAll(".majorSalarybar")
+  .data(major_character_meanrequirement)
+  .enter().append("g")
+  .attr("class","majorSalarybar");
+
+      majorSalarybar.append("rect")
+          .attr("id",function (d,i) {
+            var a=i,b=i,c=i
+            if(i<Salarybarlength) return "majorSalarybarid"+i;
+            else if(i>=Salarybarlength&&i<Salarybarlength*2) return "majorSalarybarid"+a;
+            else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return "majorSalarybarid"+b;
+            else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return "majorSalarybarid"+c;
+          })
+          //.attr("opacity",0.0)
+          .attr("visibility","hidden")
+          .attr("opacity",function(d, i) {
+            if(i>=Salarybarlength*2&&i<Salarybarlength*3) return 0.5;
+          })
+          .attr("x", function(d, i) {  
+            if(i<Salarybarlength) return chart_base_xl+i * (w / Salarybarlength);
+            else if(i>=Salarybarlength&&i<Salarybarlength*2) return chart_base_xl+(i-Salarybarlength+0.5) * (w / Salarybarlength)-0.5-1;//1/2 width of line is 1
+            else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return chart_base_xl+(i-Salarybarlength*2) * (w / Salarybarlength);
+            else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return chart_base_xl+(i-Salarybarlength*3+0.5) * (w / Salarybarlength)-0.5-1;
+          })
+          .attr("y", function(d,i) {
+            if(i<Salarybarlength) return chart_base_y-40*1- (d.salary75 * 0.0015)-80;
+            else if(i>=Salarybarlength&&i<Salarybarlength*2) return chart_base_y-40*1- (d.salary90 * 0.0015)-80;
+            else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return chart_base_y-40*1- (d.salary50 * 0.0015)-80;
+            else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return chart_base_y-40*1- (d.salary25 * 0.0015)-80;
+          })
+          .attr("width", function(d, i) { 
+            if(i<Salarybarlength) return w / Salarybarlength - 1;
+            else if(i>=Salarybarlength&&i<Salarybarlength*2) return 2;
+            else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return (w / Salarybarlength) - 1;
+            else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return 2;
+          })
+          .attr("height", function(d,i) {
+            if(i<Salarybarlength)return (d.salary75-d.salary25) * 0.0015;
+            else if(i>=Salarybarlength&&i<Salarybarlength*2) return (d.salary90-d.salary75)* 0.0015;
+            else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return 2;
+            else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return (d.salary25-d.salary10)* 0.0015;
+          })
+          .attr("fill", function(d,i) {
+          if(i<Salarybarlength)return color[i];
+          else if(i>=Salarybarlength&&i<Salarybarlength*2) return "black";
+          else if(i>=Salarybarlength*2&&i<Salarybarlength*3) return "black";
+          else if(i>=Salarybarlength*3&&i<Salarybarlength*4) return "black";
+          }) 
+          .append("title")
+          .text(function(d,i) {
+          if(i<Salarybarlength)return occupationautomation.name[i]+":"+occupationautomation.number[i]+"%";
+          })
+          .on("mouseover", function() {
+            d3.select(this)
+              .attr("fill", "orange");
+          })
+          .on("mouseout", function(d,i) {
+               d3.select(this)
+              .transition()
+              .duration(250)
+            .attr("fill", color[i]);
+          });
+  var subSalarybarlength = major_character_requirement.length;
+  console.log(major_character_requirement);
+  major_character_requirement= (major_character_requirement.concat(major_character_requirement));//2 dataset 
+  major_character_requirement= (major_character_requirement.concat(major_character_requirement));//3 dataset 
+  major_character_requirement= (major_character_requirement.concat(major_character_requirement));//4 dataset 
   
-  var majorSATbar = svg.selectAll(".majorSATbar")
-                       .data(barRange)
-                       .enter().append("g")
-                       .attr("class","majorSATbar");
+  var submajorSalarybar=svg.selectAll(".submajorSalarybar")
+  .data(major_character_requirement)
+  .enter().append("g")
+  .attr("class","submajorSalarybar");
 
-  chart_name.push("SAT");
-  chart_class_name.push(".majorSATbar");
-  chart_img_id.push("SAT_image");
-  chart_y.push(0);
-  chart_subclass_name.push("");
-  chart_sub_y.push(NaN);
-  chart_text_y.push(NaN);
-
-  majorSATbar.append("rect")
-             .attr("x",function (d,i) { 
-              return SAT_relevantX + (initmajorSAT[i]-800)*0.265;//0.265 is the scale of length
-             })
-             .attr("y",function (d,i) {
-              return SAT_relevantY - d*1.5;})
-             .attr("height",function (d,i) {
-              return d*1.5;
-             })
-             .attr("width",function(d,i){
-              return (initmajorSAT[i+1]-initmajorSAT[i])*0.265;
-             })
-             .style("fill", function (d,i) {return heatColor[i+3];})
-             .attr("visibility","hidden");
-
- majorSATbar.append("svg:image")
-            .attr('x', SAT_relevantX)
-            .attr('y', function(d,i){ return SAT_relevantY - 100;})
-            .attr('width', 250)
-            .attr('height', 141)
-            .attr("xlink:href","image/SAT.png")
-            .attr("id",'SAT_image')
-            .attr("visibility","hidden");
-
+      submajorSalarybar.append("rect")
+          .attr("id",function (d,i) {
+            var a=i,b=i,c=i
+            if(i<subSalarybarlength) return "submajorSalarybarid"+i;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return "submajorSalarybarid"+a;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return "submajorSalarybarid"+b;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return "submajorSalarybarid"+c;
+          })
+          //.attr("opacity",0.0)
+          .attr("visibility","hidden")
+          .attr("opacity",function(d, i) {
+            if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return 0.5;
+          })
+          .attr("x", function(d, i) {  
+            if(i<subSalarybarlength) return chart_base_xl+i * (w / subSalarybarlength);
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return chart_base_xl+(i-subSalarybarlength+0.5) * (w / subSalarybarlength)-0.5-1;//1/2 width of line is 1
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return chart_base_xl+(i-subSalarybarlength*2) * (w / subSalarybarlength);
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return chart_base_xl+(i-subSalarybarlength*3+0.5) * (w / subSalarybarlength)-0.5-1;
+          })
+          .attr("y", function(d,i) {
+            if(i<subSalarybarlength) return chart_base_y-40*1- (d.salary75 * 0.0015)+65;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return chart_base_y-40*1- (d.salary90 * 0.0015)+65;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return chart_base_y-40*1- (d.salary50 * 0.0015)+65;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return chart_base_y-40*1- (d.salary25 * 0.0015)+65;
+          })
+          .attr("width", function(d, i) { 
+            if(i<subSalarybarlength) return w / subSalarybarlength - 1;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return 2;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return (w / subSalarybarlength) - 1;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return 2;
+          })
+          .attr("height", function(d,i) {
+            if(i<subSalarybarlength)return (d.salary75-d.salary25) * 0.0015;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return (d.salary90-d.salary75)* 0.0015;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return 2;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return (d.salary25-d.salary10)* 0.0015;
+          })
+          .attr("fill", function(d,i) {
+          if(i<subSalarybarlength)return color[i];
+          else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return "black";
+          else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return "black";
+          else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return "black";
+          }) 
+          .append("title")
+          .text(function(d,i) {
+          if(i<subSalarybarlength)return occupationautomation.name[i]+":"+occupationautomation.number[i]+"%";
+          })
+          .on("mouseover", function() {
+            d3.select(this)
+              .attr("fill", "orange");
+          })
+          .on("mouseout", function(d,i) {
+               d3.select(this)
+              .transition()
+              .duration(250)
+            .attr("fill", color[i]);
+          });
+        chart_name.push("majorSalary");
+        chart_class_name.push(".majorSalarybar");
+        chart_img_id.push("");
+        chart_y.push(0);
+        chart_subclass_name.push(".submajorSalarybar");
+        chart_sub_y.push(0);
+        chart_text_y.push(0);
 
   //GPA
   var GPA_relevantX = accordion_bar_xl-130;
@@ -1305,45 +1538,158 @@ while($rows = mysqli_fetch_assoc($result))
 //right part start
 
 //Occupation Salary
-  var OSalary_relevantX = accordion_bar_xr - 130;
-  var OSalary_relevantY = accordion_bar_y ;//+23
-
+  
+  var w = 250;
+  var h = 100;
+  var barnumber = 1;
+  var Salarybarlength = occupation_character_meanrequirement.length;
+  occupation_character_meanrequirement= (occupation_character_meanrequirement.concat(occupation_character_meanrequirement));//2 dataset 
+  occupation_character_meanrequirement= (occupation_character_meanrequirement.concat(occupation_character_meanrequirement));//3 dataset 
+  occupation_character_meanrequirement= (occupation_character_meanrequirement.concat(occupation_character_meanrequirement));//4 dataset 
   var occupationSalarybar=svg.selectAll(".occupationSalarybar")
-        .data(barRange)
-                .enter().append("g")
-                .attr("class","occupationSalarybar");
+  .data(occupation_character_meanrequirement)
+  .enter().append("g")
+  .attr("class","occupationSalarybar");
 
-  chart_name.push("Salary");
-  chart_class_name.push(".occupationSalarybar");
-  chart_img_id.push("OSalary_image");
-  chart_y.push(0);
-  chart_subclass_name.push("");
-  chart_sub_y.push(NaN);
-  chart_text_y.push(NaN);
+      occupationSalarybar.append("rect")
+          .attr("id",function (d,i) {
+            var a=i,b=i,c=i
+            if(i<13) return "occupationSalarybarid"+i;
+            else if(i>=13&&i<26) return "occupationSalarybarid"+a;
+            else if(i>=26&&i<39) return "occupationSalarybarid"+b;
+            else if(i>=39&&i<52) return "occupationSalarybarid"+c;
+          })
+          //.attr("opacity",0.0)
+          .attr("visibility","hidden")
+          .attr("opacity",function(d, i) {
+            if(i>=26&&i<39) return 0.5;
+          })
+          .attr("x", function(d, i) {  
+            if(i<13) return chart_base_x+i * (w / Salarybarlength);
+            else if(i>=13&&i<26) return chart_base_x+(i-13+0.5) * (w / Salarybarlength)-0.5-1;//1/2 width of line is 1
+            else if(i>=26&&i<39) return chart_base_x+(i-26) * (w / Salarybarlength);
+            else if(i>=39&&i<52) return chart_base_x+(i-39+0.5) * (w / Salarybarlength)-0.5-1;
+          })
+          .attr("y", function(d,i) {
+            if(i<13) return chart_base_y-40*1- (d.salary75 * 0.0015)+65;
+            else if(i>=13&&i<26) return chart_base_y-40*1- (d.salary90 * 0.0015)+65;
+            else if(i>=26&&i<39) return chart_base_y-40*1- (d.salary50 * 0.0015)+65;
+            else if(i>=39&&i<52) return chart_base_y-40*1- (d.salary25 * 0.0015)+65;
+          })
+          .attr("width", function(d, i) { 
+            if(i<13) return w / Salarybarlength - 1;
+            else if(i>=13&&i<26) return 2;
+            else if(i>=26&&i<39) return (w / Salarybarlength) - 1;
+            else if(i>=39&&i<52) return 2;
+          })
+          .attr("height", function(d,i) {
+            if(i<13)return (d.salary75-d.salary25) * 0.0015;
+            else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.0015;
+            else if(i>=26&&i<39) return 2;
+            else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.0015;
+          })
+          .attr("fill", function(d,i) {
+          if(i<13)return color[i%13];
+          else if(i>=13&&i<26) return color[i%13];
+          else if(i>=26&&i<39) return "black";
+          else if(i>=39&&i<52) return color[i%13];
+          }) 
+          .append("title")
+          .text(function(d,i) {
+          if(i<13)return occupationautomation.name[i]+":"+occupationautomation.number[i]+"%";
+          })
+          .on("mouseover", function() {
+            d3.select(this)
+              .attr("fill", "orange");
+          })
+          .on("mouseout", function(d,i) {
+               d3.select(this)
+              .transition()
+              .duration(250)
+            .attr("fill", color[i]);
+          });
+  var subSalarybarlength = occupation_character_requirement.length;
+  console.log(occupation_character_requirement)
+  occupation_character_requirement= (occupation_character_requirement.concat(occupation_character_requirement));//2 dataset 
+  occupation_character_requirement= (occupation_character_requirement.concat(occupation_character_requirement));//3 dataset 
+  occupation_character_requirement= (occupation_character_requirement.concat(occupation_character_requirement));//4 dataset 
+  var suboccupationSalarybar=svg.selectAll(".suboccupationSalarybar")
+  .data(occupation_character_requirement)
+  .enter().append("g")
+  .attr("class","suboccupationSalarybar");
+  console.log(subSalarybarlength)
 
-  occupationSalarybar.append("rect")
-                      .attr("x",function (d,i) {
-                        return OSalary_relevantX +(initoccupationSalary[i] -10000)*0.0023;;
-                      })
-                      .attr("y",function (d,i) {
-                        return OSalary_relevantY - d*1.5;})
-                      .attr("height",function (d,i) {
-                        return d*1.5
-                      ;})
-                      .attr("width",function(d,i){
-                        return (initoccupationSalary[i+1]-initoccupationSalary[i])*0.0023;
-                      })
-                      .style("fill", function (d,i) {return heatColor[i+3]})
-                      .attr("visibility","hidden");
+      suboccupationSalarybar.append("rect")
+          .attr("id",function (d,i) {
+            var a=i,b=i,c=i
+            if(i<117) return "suboccupationSalarybarid"+i;
+            else if(i>=117&&i<117*2) return "suboccupationSalarybarid"+a;
+            else if(i>=117*2&&i<117*3) return "suboccupationSalarybarid"+b;
+            else if(i>=117*3&&117*4) return "suboccupationSalarybarid"+c;
+          })
+          //.attr("opacity",0.0)
+          .attr("visibility","hidden")
+          .attr("opacity",function(d, i) {
+            if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return 0.5;
+          })
+          .attr("x", function(d, i) {  
+            if(i<subSalarybarlength) return chart_base_x+i * (w / subSalarybarlength);
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return chart_base_x+(i-subSalarybarlength+0.5) * (w / subSalarybarlength)-0.5-1;//1/2 width of line is 1
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return chart_base_x+(i-subSalarybarlength*2) * (w / subSalarybarlength);
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return chart_base_x+(i-subSalarybarlength*3+0.5) * (w / subSalarybarlength)-0.5-1;
+          })
+          .attr("y", function(d,i) {
+            if(i<subSalarybarlength) return chart_base_y-40*1- (d.salary75 * 0.0015)+65;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return chart_base_y-40*1- (d.salary90 * 0.0015)+65;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return chart_base_y-40*1- (d.salary50 * 0.0015)+65;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return chart_base_y-40*1- (d.salary25 * 0.0015)+65;
+          })
+          .attr("width", function(d, i) { 
+            if(i<subSalarybarlength) return w / subSalarybarlength - 1;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return 2;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return (w / subSalarybarlength) - 1;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return 2;
+          })
+          .attr("height", function(d,i) {
+            /*if(i<subSalarybarlength)return (d.salary75-d.salary25) * 0.002;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return (d.salary90-d.salary75)* 0.002;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return 2;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return (d.salary25-d.salary10)* 0.002;*/
+            if(i<subSalarybarlength)return 0;
+            else if(i>=subSalarybarlength&&i<subSalarybarlength*2) return 0;
+            else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return 0;
+            else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return 0;
+          })
+          .attr("fill", function(d,i) {
+          if(i<subSalarybarlength)return color[i];
+          else if(i>=subSalarybarlength&&i<subSalarybarlength*3) return color[i];
+          else if(i>=subSalarybarlength*2&&i<subSalarybarlength*3) return "black";
+          else if(i>=subSalarybarlength*3&&i<subSalarybarlength*4) return color[i];
+          }) 
+          .append("title")
+          .text(function(d,i) {
+          if(i<subSalarybarlength)return occupationautomation.name[i]+":"+occupationautomation.number[i]+"%";
+          })
+          .on("mouseover", function() {
+            d3.select(this)
+              .attr("fill", "orange");
+          })
+          .on("mouseout", function(d,i) {
+               d3.select(this)
+              .transition()
+              .duration(250)
+            .attr("fill", color[i]);
+          });
+        chart_name.push("occupationSalary");
+        chart_class_name.push(".occupationSalarybar");
+        chart_img_id.push("");
+        chart_y.push(0);
+        chart_subclass_name.push(".suboccupationSalarybar");
+        chart_sub_y.push(0);
+        chart_text_y.push(0);
+  
 
-  occupationSalarybar.append("svg:image")
-                      .attr('x',OSalary_relevantX)
-                      .attr('y',function(d,i){return OSalary_relevantY - 100;})
-                      .attr('width', 250)
-                      .attr('height', 141)
-                      .attr("xlink:href","image/salary.png")
-                      .attr("id",'OSalary_image')
-                      .attr("visibility","hidden");
+
 
     var collegeColor=[];
     var occupationGroupColor=[];
@@ -1475,8 +1821,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationglobalization.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+(accordion_bar_height+5)*1-40;
-            return chart_base_y+(accordion_bar_height+5)*1-40 - (d * 0.5);
+          if(d<0) return chart_base_y+40*1-40;
+            return chart_base_y+40*1-40 - (d * 0.5);
          })
          .attr("width", w / occupationglobalization.number.length - 1)
          .attr("height", function(d) {
@@ -1498,7 +1844,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation Globalization Sensitivity")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x-10)
-         .attr("y", chart_base_y+1*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+1*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1524,7 +1870,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
 
-            return chart_base_y+(accordion_bar_height+5)*1-40 ;
+            return chart_base_y+40*1-40 ;
             })
          .attr("height", function(d) {
             
@@ -1563,8 +1909,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationmarried.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+(accordion_bar_height+5)*2;
-            return chart_base_y+(accordion_bar_height+5)*2 - (d * 0.5);
+          if(d<0) return chart_base_y+40*2;
+            return chart_base_y+40*2 - (d * 0.5);
          })
          .attr("width", w / occupationmarried.number.length - 1)
          .attr("height", function(d) {
@@ -1585,7 +1931,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation marriedPercentAge30to50")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+2*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+2*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1605,8 +1951,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / married.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+(accordion_bar_height+5)*2;
-            return chart_base_y+(accordion_bar_height+5)*2 - (d * 0);
+          if(d<0) return chart_base_y+40*2;
+            return chart_base_y+40*2 - (d * 0);
             })
          .attr("height", function(d) {
             if(d<0) return d * (-0);
@@ -1644,8 +1990,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / occupationblackPercent.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+(accordion_bar_height+5)*3;
-            return chart_base_y+(accordion_bar_height+5)*3 - (d * 2);
+          if(d<0) return chart_base_y+40*3;
+            return chart_base_y+40*3 - (d * 2);
          })
          .attr("width", w / occupationblackPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1667,7 +2013,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationblackPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+3*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+3*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1685,8 +2031,8 @@ while($rows = mysqli_fetch_assoc($result))
             return chart_base_x+i * (w / blackPercent.number.length);
          })
          .attr("y", function(d) {
-          if(d<0) return chart_base_y+(accordion_bar_height+5)*3;
-            return chart_base_y+(accordion_bar_height+5)*3 - (d * 0);
+          if(d<0) return chart_base_y+40*3;
+            return chart_base_y+40*3 - (d * 0);
          })
          .attr("width", w / blackPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1727,7 +2073,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*4 - (d * 2);
+            return chart_base_y+40*4 - (d * 2);
          })
          .attr("width", w / occupationasianPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1748,7 +2094,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationasianPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+4*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+4*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1767,7 +2113,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*4 - (d * 0);
+            return chart_base_y+40*4 - (d * 0);
          })
          .attr("width", w / asianPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1807,7 +2153,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*5 - (d * 2);
+            return chart_base_y+40*5 - (d * 2);
          })
          .attr("width", w / occupationhispanicPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1827,7 +2173,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationhispanicPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+5*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+5*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1846,7 +2192,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*5 - (d * 0);
+            return chart_base_y+40*5 - (d * 0);
          })
          .attr("width", w / hispanicPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1888,7 +2234,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*6 - (d * 0.5);
+            return chart_base_y+40*6 - (d * 0.5);
          })
          .attr("width", w / occupationfemalePercent.number.length - 1)
          .attr("height", function(d) {
@@ -1908,7 +2254,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationfemalePercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+6*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+6*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -1927,7 +2273,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*6 - (d * 0);
+            return chart_base_y+40*6 - (d * 0);
          })
          .attr("width", w / femalePercent.number.length - 1)
          .attr("height", function(d) {
@@ -1967,7 +2313,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*7 - (d * 2);
+            return chart_base_y+40*7 - (d * 2);
          })
          .attr("width", w / occupationforeignBornPercent.number.length - 1)
          .attr("height", function(d) {
@@ -1987,7 +2333,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationforeignBornPercent")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+7*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+7*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -2006,7 +2352,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*7 - (d * 0);
+            return chart_base_y+40*7 - (d * 0);
          })
          .attr("width", w / foreignBornPercent.number.length - 1)
          .attr("height", function(d) {
@@ -2046,7 +2392,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*8 - (d * 1);
+            return chart_base_y+40*8 - (d * 1);
          })
          .attr("width", w / occupationaverageHoursOfWorkOrWeek.number.length - 1)
          .attr("height", function(d) {
@@ -2066,7 +2412,7 @@ while($rows = mysqli_fetch_assoc($result))
          .text("Occupation occupationaverageHoursOfWorkOrWeek")
          .attr("visibility","hidden")
          .attr("x",  chart_base_x)
-         .attr("y", chart_base_y+8*(accordion_bar_height+5)+30)
+         .attr("y", chart_base_y+8*40+30)
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "gray");
@@ -2084,7 +2430,7 @@ while($rows = mysqli_fetch_assoc($result))
          })
          .attr("y", function(d) {
           if(d<0) return 730;
-            return chart_base_y+(accordion_bar_height+5)*8 - (d * 0);
+            return chart_base_y+40*8 - (d * 0);
          })
          .attr("width", w / averageHoursOfWorkOrWeek.number.length - 1)
          .attr("height", function(d) {
@@ -2151,12 +2497,11 @@ while($rows = mysqli_fetch_assoc($result))
         .on("click", clickOnCollegeMainbar)
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-          d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
-          d3.select(this).style("cursor", "pointer");
+      d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-          d3.selectAll("polygon").style("fill-opacity",0.4);
+      d3.selectAll("polygon").style("fill-opacity",0.4);
         });
 
 
@@ -2176,15 +2521,11 @@ while($rows = mysqli_fetch_assoc($result))
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon[id="+pathID+"]").style("fill-opacity",1.0);
-      d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-          d3.selectAll("polygon").style("fill-opacity",0.4);
+      d3.selectAll("polygon").style("fill-opacity",0.4);
         });
-      
-      var collegeName = collegeMainbar.append("g")
-          .attr("class","collegeName");
 
 
     //create initial occupation bar
@@ -2209,8 +2550,7 @@ while($rows = mysqli_fetch_assoc($result))
         .on("click", clickOnOccupationMainbar)
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
-          d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
-          d3.select(this).style("cursor", "pointer");
+      d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
@@ -2234,14 +2574,12 @@ while($rows = mysqli_fetch_assoc($result))
         .on("mouseover",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon[ogid="+pathID+"]").style("fill-opacity",1.0);
-      d3.select(this).style("cursor", "pointer");
         })
         .on("mouseout",function(d,i){
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon").style("fill-opacity",0.4);
         });
-      var occupationName = occupationMainbar.append("g")
-          .attr("class","occupationName");
+
 
   //Collapse option icon
   var collapseButtonData=[0,1];
@@ -2261,8 +2599,7 @@ while($rows = mysqli_fetch_assoc($result))
     .attr('height', 30)
     .attr("xlink:href","image/up-arrow-circle-md.png")
     .attr("id",'college')
-    .on("click", collapseToMainbar)
-    .on("mouseover",function(d){d3.select(this).style("cursor", "pointer");});
+    .on("click", collapseToMainbar);
   collegeCollapseButton.append("text")
         .attr("class","collegeCollapseButton")
         .text("Back")
@@ -2285,8 +2622,7 @@ while($rows = mysqli_fetch_assoc($result))
     .attr('height', 30)
     .attr("xlink:href","image/up-arrow-circle-md.png")
     .attr("id",'occupationGroup')
-    .on("click", collapseToMainbar)
-    .on("mouseover",function(d){d3.select(this).style("cursor", "pointer");});
+    .on("click", collapseToMainbar);
   occupationCollapseButton.append("text")
         .attr("class","occupationCollapseButton")
         .text( "Back")
@@ -2302,21 +2638,12 @@ while($rows = mysqli_fetch_assoc($result))
 
   collapseButton.append("text")
         .text( function (d,i) {return i<1 ? "College":"Occupation";;})
-        .attr("x", function (d,i) {return i<1 ? relevantX-35:relevantX+250;})
+        .attr("x", function (d,i) {return i<1 ? relevantX-9:relevantX+270;})
         .attr("y", -40)
         .attr("dy", ".35em")
         .attr("text-anchor", "start")
-        .attr("font-family", "Impact, Charcoal, sans-serif")
-        .attr("font-weight", "bold")
-        .style("font-size", 30)//18
-        .attr("fill", "#444444");
-  collapseButton.append("svg:image")
-      .attr('x',relevantX+100)
-      .attr('y',-70)
-      .attr('width', 130)
-      .attr('height', 60)
-      .attr("xlink:href","image/arrow.png")
-      .style("opacity",0.2);
+        .style("font-size", 18)
+        .attr("fill", colors[0]);
 
 
   find_college_occupationGroup();
@@ -2395,4 +2722,3 @@ while($rows = mysqli_fetch_assoc($result))
 
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
