@@ -2411,9 +2411,7 @@ function mouseoverMajor(){
 			majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
 			majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
 
-			majorSATbar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-				.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+			
 
 			majorGPAbar.select("rect").transition().duration(200)
 				.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
@@ -2936,9 +2934,7 @@ function majorCharacterChange(ID){
     majorVQRBar.selectAll("rect").transition().duration(500)
 		.style("opacity",0.9)
 		.attr("height",function (d,i,j) { return 40;});*/
-	majorSATbar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-		.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+
 
 	majorGPAbar.select("rect").transition().duration(500)
 		.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})

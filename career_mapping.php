@@ -2526,7 +2526,8 @@ while($rows = mysqli_fetch_assoc($result))
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon").style("fill-opacity",0.4);
         });
-
+ var collegeName = collegeMainbar.append("g")
+          .attr("class","collegeName");
 
     //create initial occupation bar
   var occupationGroupX = [];
@@ -2579,7 +2580,8 @@ while($rows = mysqli_fetch_assoc($result))
           var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
       d3.selectAll("polygon").style("fill-opacity",0.4);
         });
-
+ var occupationName = occupationMainbar.append("g")
+          .attr("class","occupationName");
 
   //Collapse option icon
   var collapseButtonData=[0,1];
