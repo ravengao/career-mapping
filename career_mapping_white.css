@@ -6,25 +6,32 @@ body {
   margin-bottom: 0px;
   font-family: 'Calibri';
     font-weight: 400;
+
 }
+
+#centralChart {
+    position: fixed;
+    top : 0;
+ }
+
   rect.bordered {
-        stroke: #E6E6E6;
-        stroke-width:1px;   
-      }
+    stroke: #E6E6E6;
+    stroke-width:1px;   
+  }
 
-      text.mono {
-        font-size: 9pt;
-        font-family: Consolas, courier;
-        fill: #aaa;
-      }
+  text.mono {
+    font-size: 9pt;
+    font-family: Consolas, courier;
+    fill: #aaa;
+  }
 
-      text.axis-workweek {
-        fill: #000;
-      }
+  text.axis-workweek {
+    fill: #000;
+  }
 
-      text.axis-worktime {
-        fill: #000;
-      }
+  text.axis-worktime {
+    fill: #000;
+  }
 
 div.tooltip { 
     position: absolute;     
@@ -41,6 +48,7 @@ div.tooltip {
     left:50;
       
 }
+/*
 div.tooltip{
   margin-left: 0;
   margin-right: -12px;
@@ -50,6 +58,20 @@ div.tooltip{
   border-left-color: hsla(0, 0%, 20%, 0.9);
 
 }
+div.majorDescription {
+      position: absolute;     
+    text-align: center;     
+    width: 250px;         
+            
+    padding: 8px;       
+    font: 12px sans-serif;    
+    background: lightsteelblue; 
+    border: 0px;    
+    border-radius: 4px;     
+    pointer-events: none;
+    white-space: pre-wrap;
+    left:50;
+}*/
 div.search {  
     position: absolute; 
     width: 450px; 
@@ -133,56 +155,59 @@ button:hover
   position: absolute;
   top: 0;
   left: 0;
-
 }
 
 rect.accordion_bar
-    {
-      fill: #ccc;
-      cursor: pointer;
-    }
-    rect.accordion_bar.active, rect.accordion_bar:hover
-    {
-      fill: #70ABD0; 
-    }
+{
+  fill: #ccc;
+  cursor: pointer;
+}
+rect.accordion_bar.active, rect.accordion_bar:hover
+{
+  fill: #70ABD0; 
+  stroke-width:2px; 
+  stroke: #70ABD0;
+}
 
-    rect.accordion_panel
-    {
-      fill: #eee;
-      display: none;
+rect.accordion_panel
+{
+  fill: #fff;
+  display: none;
+  stroke: #70ABD0;
+  stroke-width:2px; 
 
-    }
-    rect.accordion_panel.show
-    {
-      display: block;
-    }
+}
+rect.accordion_panel.show
+{
+  display: block;
+}
 
-    text.accordion_name
-    {
-      font-size: 20px;
-      fill:black;
-      cursor: pointer;
-    }
+text.accordion_name
+{
+  font-size: 15px;
+  fill:black;
+  cursor: pointer;
+}
 
 
-  p
-  {
-    font-family:Impact, Charcoal, sans-serif;
-    font-size:22px; 
-    font-weight:bold; 
-    color:white; 
-    padding-top:5px; 
-    letter-spacing:0.5px;"
-  }
-  a
-  {
-    font-family:times; 
-    font-size:14px; 
-    font-weight:normal;
-    color:#70ABD0; 
-    cursor:pointer;
-  }
-  a:hover
-  {
-    color:#90ABD0;
-  };
+p
+{
+  font-family:Impact, Charcoal, sans-serif;
+  font-size:22px; 
+  font-weight:bold; 
+  color:white; 
+  padding-top:5px; 
+  letter-spacing:0.5px;"
+}
+a
+{
+  font-family:times; 
+  font-size:14px; 
+  font-weight:normal;
+  color:#70ABD0; 
+  cursor:pointer;
+}
+a:hover
+{
+  color:#90ABD0;
+};
