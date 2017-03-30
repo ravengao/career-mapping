@@ -17,7 +17,8 @@ function ClickAccordion(index)
   {
     if( chart_class_name[index] != "")
     {
-      d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","hidden");
+      d3.selectAll(chart_class_name[index]).selectAll("rect").attr("visibility","hidden");
+      d3.selectAll(chart_class_name[index]).selectAll("#yaxis").attr("visibility","hidden");
     }
 
     if( chart_img_id[index] != "")
@@ -26,7 +27,7 @@ function ClickAccordion(index)
     }
     if( chart_subclass_name[index] != "")
     {
-      d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","hidden");
+      d3.selectAll(chart_subclass_name[index]).selectAll("rect").attr("visibility","hidden");
       d3.selectAll(chart_class_name[index]).select("text").attr("visibility","hidden");
     } 
   }
@@ -34,7 +35,8 @@ function ClickAccordion(index)
   {
     if( chart_class_name[index] != "")
     {
-      d3.selectAll(chart_class_name[index]).select("rect").attr("visibility","visible");
+      d3.selectAll(chart_class_name[index]).selectAll("rect").attr("visibility","visible");
+      d3.selectAll(chart_class_name[index]).selectAll("#yaxis").attr("visibility","visible");
     }
 
     if( chart_img_id[index] != "")
@@ -43,7 +45,7 @@ function ClickAccordion(index)
     }
     if(chart_subclass_name[index] != "")
     {
-      d3.selectAll(chart_subclass_name[index]).select("rect").attr("visibility","visible");
+      d3.selectAll(chart_subclass_name[index]).selectAll("rect").attr("visibility","visible");
       d3.selectAll(chart_class_name[index]).select("text").attr("visibility","visible");
     }
     
@@ -72,16 +74,21 @@ function ClickAccordion(index)
         }
         // console.log(chart_y[i]);
         if(chart_class_name[i] != "")
-          d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
-
+        {
+          d3.selectAll(chart_class_name[i]).selectAll("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
+      	  yaxis=axislocation.y[i]+chart_y[i];
+		  d3.selectAll(chart_class_name[i]).select("#yaxis").attr("transform","translate("+axislocation.x[i]+","+yaxis+")") ;
+      	 
+      	}
         if(chart_subclass_name[i] != "")
         {
           chart_sub_y[i]-=accordion_panel_height;
           // console.log(chart_sub_y[i]);
-          d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
+          d3.selectAll(chart_subclass_name[i]).selectAll("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
           chart_text_y[i]-=accordion_panel_height;
           // console.log(chart_text_y[i]);
-          d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
+          if(i>10)
+          {d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;}
         }
         else
         {
@@ -103,16 +110,23 @@ function ClickAccordion(index)
         }
         // console.log(chart_y[i]);
         if(chart_class_name[i] != "")
-          d3.selectAll(chart_class_name[i]).select("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
-
+        {
+        	
+          d3.selectAll(chart_class_name[i]).selectAll("rect").attr("transform","translate(0,"+chart_y[i]+")") ;
+      	  yaxis=axislocation.y[i]+chart_y[i];
+		  d3.selectAll(chart_class_name[i]).select("#yaxis").attr("transform","translate("+axislocation.x[i]+","+yaxis+")") ;
+		  
+		}
         if(chart_subclass_name[i] != "")
         {
           chart_sub_y[i]+=accordion_panel_height;
           // console.log(chart_sub_y[i]);
-          d3.selectAll(chart_subclass_name[i]).select("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
+          d3.selectAll(chart_subclass_name[i]).selectAll("rect").attr("transform","translate(0,"+chart_sub_y[i]+")") ;
           chart_text_y[i]+=accordion_panel_height;
           // console.log(chart_text_y[i]);
-          d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;
+          if(i>10)
+          {d3.selectAll(chart_class_name[i]).select("text").attr("transform","translate(0,"+chart_text_y[i]+")") ;}
+          
         }
         else
         {
@@ -167,6 +181,7 @@ function collapseToMainbar(){
 
 		college.click = '?';
 		college_click = '?';
+		majorsidebar(this.style);
 		if(college.click=='?' && occupationGroup.click =='?'){
 			find_college_occupationGroup();
 		}
@@ -179,7 +194,7 @@ function collapseToMainbar(){
 
 	
 	if (this.id == 'occupationGroup' && occupationGroup.click!='?'){
-			occupationName.selectAll("text").remove();
+		occupationName.selectAll("text").remove();
 		occupationName.selectAll("rect").remove();
 		d3.selectAll(".occupationDot").transition().duration(animationTime).attr("stroke-width",0.0).style("fill-opacity",1);
 		d3.selectAll(".occupationCollapseButton").attr("visibility","hidden");
@@ -220,6 +235,8 @@ function collapseToMainbar(){
 		//occupationGroup_click_buff='?';
 		occupationGroup.click = '?';
 		occupationGroup_click = '?';
+		occupationsidebar(this.style);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		
 		if(college.click=='?' && occupationGroup.click =='?'){
 			find_college_occupationGroup();
 		}
@@ -312,6 +329,9 @@ var majorWidth = [];
 var occupationX = [];
 var occupationWidth = [];
 
+var tooltip = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
 
 
 //calculate X(actually Y) for college,major bla bla
@@ -358,14 +378,15 @@ function clickOnCollegeMainbar(d,i) {
 		.attr("stroke-width", 0);
 
 	var startpoint = 0;
-	d3.select(this.parentNode.childNodes[0]).transition().duration(animationTime)
+	d3.select(this.parentNode.childNodes[0]).transition()
 		.attr("x", relevantX - 4)
 		.attr("width", 38)
 		.attr("height", function (d) {return 470;})
 		.attr("y", function (d){startpoint=collegeX[i];return collegeX[i];})
 		.attr("fill-opacity",0)//change underlying color or mainbar
 		.attr("stroke-width", 6)
-		.attr("stroke", this.parentNode.childNodes[0].style.fill);
+		.attr("stroke", this.parentNode.childNodes[0].style.fill)
+		.duration(animationTime);
 
 	college_click = true;
 	idBuff=this.id;
@@ -393,14 +414,17 @@ function clickOnCollegeMainbar(d,i) {
 
 
 	//create path
-	d3.selectAll(".mainPath").transition().duration(animationTime)//1000
-		.style("opacity",0);
+	d3.selectAll(".mainPath").transition().style("opacity",0).duration(animationTime);
 
-	//major of the college
-	majorCharacterChange(this.id);
-
-	//create college names and collapse space
-	words = (this.id).split(/\s+/);
+	thisID = this.id;
+	if((thisID.length)>15){
+		if(thisID.length > 20)
+			cname = thisID.match(/[^\s]+\s[^\s]+/g);
+		else
+			cname = thisID.match(/[^\s]+/g);
+	}else{
+		cname = this.id;
+	}
 
 	collegeName.selectAll("text").remove();
 	collegeName.selectAll("rect").remove();
@@ -414,30 +438,38 @@ function clickOnCollegeMainbar(d,i) {
 			return startpoint;//+200
 		})
 		.style("fill","#eeeeee")
-		.style("fill-opacity",0.01)
+		.style("fill-opacity",0)
 		.on("click",
 			collapseToMainbar);
 
-	collegeName.selectAll(".collegeName").data(words).enter()
+	collegeName.selectAll(".collegeName").data(cname).enter()
 		.append('text')
         .text(function(d,i){
-        	//console.log(d)
-        	return words[i];})
+        	if((thisID.length)>15){
+        		return cname[i];
+        	}else{
+        		return cname;
+        	}})
         .style("fill","#cccccc")
-		.style("fill-opacity",0.1)
+		.style("opacity",0)
 		.style("font-family","Impact, Charcoal, sans-serif")
 		.attr("font-size",60)
-		.attr("x", relevantX - 300)
-		.attr("y", function(d,i){
-			return startpoint+100+60*i;//+200
-		}).transition().duration(animationTime);
-
-
+		.attr("transform",function(d,i){
+			if((thisID.length)>15){
+				return "translate("+(relevantX - 210 +60*i)+", "+(startpoint+410)+") rotate(-90)";
+			}else{
+				return "translate("+(relevantX - 210)+", "+(startpoint+300)+") rotate(-90)";
+			}
+		});
+		
+		collegeName.selectAll("text").transition().style("opacity",0.2).duration(animationTime+600);
+		majorsidebar(subbarColor);
 };
 
 
 
 function clickOnOccupationMainbar(d,i){
+
 	d3.selectAll(".occupationCollapseButton").attr("visibility","visible");
 	occExpandPoint = occupationGroupX[i];
 	for (var j = 0; j < occupationGroupWidth.length; j++) {
@@ -464,14 +496,15 @@ function clickOnOccupationMainbar(d,i){
 		.attr("stroke-width", 0);
 
 	var startpoint = 0;
-	d3.select(this.parentNode.childNodes[0]).transition().duration(animationTime)
+	d3.select(this.parentNode.childNodes[0]).transition()
 		.attr("x", relevantX + 286)
 		.attr("width", 38)
 		.attr("height", function (d) {return 475;})
 		.attr("y", function (d){startpoint=occupationGroupX[i];return occupationGroupX[i];})
 		.attr("fill-opacity",0)
 		.attr("stroke-width", 6)
-		.attr("stroke", this.parentNode.childNodes[0].style.fill);
+		.attr("stroke", this.parentNode.childNodes[0].style.fill)
+		.duration(animationTime);
 
 	occupationGroup_click = true;
 	idBuff=this.id;
@@ -494,59 +527,70 @@ function clickOnOccupationMainbar(d,i){
 	//create occupation bar
 	occupationGroup.click= this.id;
 	find_major_occupation(college.click, occupationGroup.click, startpoint, this.parentNode.childNodes[0].style,subbarColor);		
-
+	
 	//create path
-	d3.selectAll(".mainPath").transition().duration(animationTime)
-		.style("opacity",0);
+	d3.selectAll(".mainPath").transition().style("opacity",0).duration(animationTime);
 
 	occupationCharacterChange(this.id);
 
-	//create occu names and collapse space
-	words = (this.id).split(/\s+/);
+
+	thisID = this.id;
+	if((thisID.length)>15){
+		//cname = (this.id).split(/\s+/,2);
+		if(thisID.length > 20)
+			cname = thisID.match(/[^\s]+\s[^\s]+/g);
+		else
+			cname = thisID.match(/[^\s]+/g);
+	}else{
+		cname = this.id;
+	}
 
 	occupationName.selectAll("text").remove();
 	occupationName.selectAll("rect").remove();
 
 	occupationName.append("rect")
 		.attr("id","occupationGroup")
-		.attr("width", 290)
+		.attr("width", 250)
 		.attr("height", function (d) {return 470;})
 		.attr("x", relevantX + 330)
 		.attr("y", function(d,i){
 			return startpoint;//+200
 		})
 		.style("fill","#eeeeee")
-		.style("fill-opacity",0.01)
+		.style("fill-opacity",0)
 		.on("click",
 			collapseToMainbar);
 
-	occupationName.selectAll(".occupationName").data(words).enter()
+	occupationName
 		.append('text')
         .text(function(d,i){
-        	//console.log(d)
-        	return words[i];})
+        	if((thisID.length)>15){
+        		return cname[i];
+        	}else{
+        		return cname;
+        	}})
         .style("fill","#cccccc")
-		.style("fill-opacity",0.1)
+		.style("opacity",0)
 		.style("font-family","Impact, Charcoal, sans-serif")
 		.attr("font-size",60)
-		/*.attr("x", relevantX + 330)
-		.attr("y", function(d,i){
-			return startpoint+100+60*i;//+200
-		})*/
 		.attr("transform",function(d,i){
-			return "translate("+ (relevantX + 350)+","+(startpoint+100+60*i)+") "
-		})//"rotate("+(relevantX + 330)+","+(startpoint+100)+",90)")
-		.transition().duration(animationTime);
+			if((thisID.length)>15){
+				return "translate("+(relevantX +500)+", "+(startpoint+50+60*i)+") rotate(90)";
+			}else{
+				return "translate("+(relevantX +500)+", "+(startpoint+50)+") rotate(90)";
+			}
+		});
+		occupationName.selectAll("text").transition().style("opacity",0.2).duration(animationTime+600);
+
+
+	occupationsidebar(subbarColor);//
+	
 };
 
 
-var majorDescription = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
-var occupationDescription = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
-    
+
+
+
 
 var mainCollBarColor,mainOccuBarColor;
 //create bars for major and occupation (allowing functions): 4
@@ -560,12 +604,15 @@ function create_major_bar(major,startpoint,style,subbarColor){
 
 	initX(major, majorX, majorWidth,mscale);
 
-	var collegeSubbar=svg.selectAll(".collegeSubbar")
+	var collegeSubbar=centralChart.selectAll(".collegeSubbar")
             .data(major.name)
             .enter().append("g")
             .attr("class","collegeSubbar")
-            .attr("mid","init");
-
+            .attr("mid","init")
+            .attr("num",function(d,i){
+			    return major.number[i];
+		    });
+        
         collegeSubbar.append("rect")
             .attr("class","collegeSubbar")
             .attr("x",relevantX + 2.5)
@@ -576,6 +623,7 @@ function create_major_bar(major,startpoint,style,subbarColor){
             .attr("cid",function(d){
 			    	return "init";
 		    })
+		    
             .style("fill", function(d,i) {
   				return subbarColor[i]; 
   				//return colors[i]; 
@@ -585,15 +633,16 @@ function create_major_bar(major,startpoint,style,subbarColor){
             .on("mouseover", mouseoverMajor)
             .on("click",clickOnMajor)
             .on("mouseout", function(d) {
-            	majorDescription.transition()		
+            	d3.select(".tooltip").transition()		
 	                .duration(500)		
 	                .style("opacity", 0);	
 	            d3.selectAll(".majorVQRHighlightBar").remove();
 
-				d3.select("#majorScatterplot").selectAll("circle[gid="+college.click.replace(/ /g,'').replace(/','/g,'')+"]")
+				d3.select("#majorScatterplot").selectAll("circle[gid="+college.click.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
+	        
     
     var majorPercentage = calculatePercentage(major.number);
         collegeSubbar.append("text")
@@ -615,11 +664,11 @@ function create_major_bar(major,startpoint,style,subbarColor){
             .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {	
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);	
-	            majorDescription.transition()		
+	            d3.select(".tooltip").transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".majorVQRHighlightBar").remove();
-	            d3.select("#majorScatterplot").selectAll("circle[gid="+college.click.replace(/ /g,'').replace(/','/g,'')+"]")
+	            d3.select("#majorScatterplot").selectAll("circle[gid="+college.click.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -655,10 +704,13 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
 
 	initX(occupation, occupationX, occupationWidth, oscale);
 
-	var occupationSubbar=svg.selectAll(".occupationSubbar")
+	var occupationSubbar=centralChart.selectAll(".occupationSubbar")
             .data(occupation.number)
             .enter().append("g")
-            .attr("class","occupationSubbar");
+            .attr("class","occupationSubbar")
+             .attr("num",function(d,i){
+			    	return occupation.number[i];
+		    });
         
         occupationSubbar.append("rect")
             .attr("class","occupationSubbar")
@@ -680,12 +732,12 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
             .on("click",clickOnOccupation)
             .on("mouseout", function(d) {	
             		
-	            occupationDescription.transition()		
+	            d3.select(".tooltip").transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            //d3.selectAll(".mainPath").style("fill-opacity",0.9);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
-	            d3.select("#occupationScatterplot").selectAll("circle[gid="+occupationGroup.click.replace(/ /g,'').replace(/','/g,'')+"]")
+	            d3.select("#occupationScatterplot").selectAll("circle[gid="+occupationGroup.click.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -709,11 +761,11 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
             .on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {	
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);	
-	            occupationDescription.transition()		
+	            d3.select(".tooltip").transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
-	            d3.select("#occupationScatterplot").selectAll("circle[gid="+occupationGroup.click.replace(/ /g,'').replace(/','/g,'')+"]")
+	            d3.select("#occupationScatterplot").selectAll("circle[gid="+occupationGroup.click.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -735,12 +787,17 @@ function create_occupation_bar(occupation,startpoint,style,subbarColor){
       		.style("fill", function(d) { 
       			return "black";//mainOccuBarColor=style.fill;return style.fill; 
       		})
-      		.duration(animationTime);           	
+      		.duration(animationTime);  
+    
+
 };
+
+
 
 function mouseoverMajor(){
 	d3.select(this).style("cursor", "pointer");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');
+	d3.selectAll(".mainPath").selectAll("text").attr("visibility","hidden");
 	d3.selectAll(".mainPath").style("fill-opacity",0.4);
 	//d3.selectAll("polygon#"+pathID).style("fill-opacity",0.9);
 	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",1.0);//0.9
@@ -756,15 +813,6 @@ function mouseoverMajor(){
 
 			name = major_character_requirement[i].major;
 			description = major_character_requirement[i].description;
-
-
-            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
-                .style("left", (d3.event.pageX-280) + "px")		
-                .style("top", (d3.event.pageY + 10) + "px");
-
-			majorDescription.transition()		
-                .duration(200)		
-                .style("opacity", .9);	
 
 			var majorSAT = [];
 			var majorGPA = [];
@@ -812,24 +860,19 @@ function mouseoverMajor(){
 			majorGPA.push(majorGPA10,majorGPA25, majorGPA50, majorGPA75,majorGPA90);
 			majorSalary.push(majorSalary10,majorSalary25, majorSalary50, majorSalary75,majorSalary90);
 
-			majorSATbar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-				.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+			
 
-			majorGPAbar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
-				.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
+			
 
-			majorSalarybar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return MSalary_relevantX+33+ (majorSalary[i]-10000)*0.0023;})
-				.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
+			
 	    }
 	}
 };
 
 function mouseoverOccupation(){
 	d3.select(this).style("cursor", "pointer");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');
+	d3.selectAll(".mainPath").selectAll("text").attr("visibility","hidden");
 	d3.selectAll(".mainPath").style("fill-opacity",0.4);
 	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",1);
 	d3.select("#occupationScatterplot").selectAll("circle[id="+pathID+"]").style("fill-opacity",1)
@@ -860,34 +903,64 @@ function mouseoverOccupation(){
 
 			occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
 
-			occupationSalarybar.select("rect").transition().duration(200)
-				.attr("x",function(d,i){return OSalary_relevantX+33+(occupationSalary[i]-10000)*0.0023;})
-				.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
+
 
 	    }
 	}
 };
 
+/*
 var markOrder = 0;
 var markList = [0,0];
-var majorVQRHighlightBar0, majorVQRHighlightBar1;
+var majorVQRHighlightBar0, majorVQRHighlightBar1;*/
+
+
+var studentNum = [];
 function clickOnMajor(){
+	totalNum = this.parentNode.getAttribute("num");
+	thisID = this.id;
 	d3.selectAll(".collegeSubbar").select("rect").transition().duration(500)					
 		.attr("stroke-width", 0.5)
 		.attr("stroke","black");
-	var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
+	var pathID=this.id.replace(/\s/g,'').replace(/,/g,'');
 	d3.selectAll(".mainPath").style("fill-opacity",0.1);
 	d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
 	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
 		.attr("stroke-width", 4)
 		.attr("stroke","red");
+	d3.selectAll(".mainPath").selectAll("text").attr("visibility","hidden");
+	d3.selectAll(".mainPath").selectAll("text[cid="+pathID+"]")
+		.attr("visibility","visible")
+		.text(function(d,i){
+			percentage = d3.select(this).attr("num")/totalNum;
+			return ""+ (percentage*100).toFixed(0) +"%";
+		});
 
-	/*
+	for (var i = 0; i < major_character_requirement.length; i++) {
+		if(major_character_requirement[i].major == thisID){
+			name = major_character_requirement[i].major;
+			description = major_character_requirement[i].description;
+		}
+	}
+
+	d3.select(".tooltip").transition()		
+        .duration(200)		
+        .style("opacity", .9);	
+
+	    d3.select(".tooltip").html(name.bold().fontsize(3)+"\r\n"+description)	
+	        .style("left", (d3.event.pageX-300) + "px")		
+	        .style("top", (d3.event.pageY+10) + "px");
+    
+
+	
+
+
+/*
 	if (markOrder>1)
 		markOrder=0;
 	if(markOrder<2){
 
-		var pathID=this.id.replace(/\s/g,'').replace(/','/g,'');
+		var pathID=this.id.replace(/\s/g,'').replace(/,/g,'');
 		d3.selectAll(".mainPath").style("fill-opacity",0.3);
 		d3.selectAll("polygon[cid="+pathID+"]").style("fill-opacity",0.9);
 		
@@ -931,11 +1004,11 @@ function clickOnMajor(){
 				description = major_character_requirement[i].description;
 
 				if(markOrder==0){
-	            majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	            tooltip.html(name.bold().fontsize(3)+"\r\n"+description)	
 	                .style("left", (d3.event.pageX-280) + "px")		
 	                .style("top", (d3.event.pageY + 10) + "px");
 
-				majorDescription.transition()		
+				tooltip.transition()		
 	                .duration(200)		
 	                .style("opacity", .9);	
 			    
@@ -1001,11 +1074,11 @@ function clickOnMajor(){
 					.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
 				}if (markOrder==1) {
 					//create new bars
-					majorDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+					tooltip.html(name.bold().fontsize(3)+"\r\n"+description)	
 	                .style("left", (d3.event.pageX-280) + "px")		
 	                .style("top", (d3.event.pageY + 10) + "px");
 
-				majorDescription.transition()		
+				tooltip.transition()		
 	                .duration(200)		
 	                .style("opacity", .9);	
 			    d3.selectAll(".majorVQRHighlightBar1").remove();
@@ -1021,21 +1094,46 @@ var omarkOrder = 0;
 var omarkList = [0,0];
 var occupationVQRHighlightBar0, occupationVQRHighlightBar1;
 function clickOnOccupation(){
+	totalNum = this.parentNode.getAttribute("num");
+	thisID = this.id;
 	d3.selectAll(".occupationSubbar").select("rect").transition().duration(500)					
 		.attr("stroke-width", 0.5)
 		.attr("stroke","black");
-	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
+	var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/,/g,'');
 	d3.selectAll(".mainPath").style("fill-opacity",0.1);
 	d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
 	d3.select(this.parentNode.childNodes[0]).transition().duration(500)					
 		.attr("stroke-width", 4)
 		.attr("stroke","red");
+	d3.selectAll(".mainPath").selectAll("text").attr("visibility","hidden");
+	d3.selectAll(".mainPath").selectAll("text[oid="+pathID+"]")
+		.attr("visibility","visible")
+		.text(function(d,i){
+			percentage = d3.select(this).attr("num")/totalNum;
+			return ""+ (percentage*100).toFixed(0) +"%";
+		});
+
+	for (var i = 0; i < occupation_character_requirement.length; i++) {
+		if(occupation_character_requirement[i].major == thisID){
+			name = occupation_character_requirement[i].major;
+			description = occupation_character_requirement[i].description;
+		}
+	}
+	console.log(current)
+	d3.select(".tooltip").transition()		
+        .duration(200)		
+        .style("opacity", .9);	
+
+    d3.select(".tooltip").html(name.bold().fontsize(3)+"\r\n"+description)	
+        .style("left", (d3.event.pageX+40) + "px")		
+        .style("top", (d3.event.pageY+10) + "px");
+    
 	/*
 	if (omarkOrder>1)
 		omarkOrder=0;
 	if(omarkOrder<2){
 
-		var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/','/g,'');
+		var pathID=this.id.replace(/\s/g,'').replace(/\//g,'').replace(/,/g,'');
 		d3.selectAll(".mainPath").style("fill-opacity",0.4);
 		d3.selectAll("polygon[oid="+pathID+"]").style("fill-opacity",0.9);
 		
@@ -1079,16 +1177,16 @@ function clickOnOccupation(){
 				description = occupation_character_requirement[i].description;
 
 				if(omarkOrder==0){
-	            occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+	            tooltip.html(name.bold().fontsize(3)+"\r\n"+description)	
 	                .style("left", (d3.event.pageX-280) + "px")		
 	                .style("top", (d3.event.pageY + 10) + "px");
 
-				occupationDescription.transition()		
+				tooltip.transition()		
 	                .duration(200)		
 	                .style("opacity", .9);	
 			    
 				d3.selectAll(".occupationVQRHighlightBar0").remove();
-				// occupationVQRHighlightBar0=svg.selectAll(".occupationVQRHighlightBar0")
+				// occupationVQRHighlightBar0=centralChart.selectAll(".occupationVQRHighlightBar0")
 		  //           .data(occupationVQRBuff)
 		  //           .enter().append("g")
 		  //           .attr("class","occupationVQRHighlightBar0");
@@ -1132,15 +1230,15 @@ function clickOnOccupation(){
 					.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
 				}if (omarkOrder==1) {
 					//create new bars
-					occupationDescription.html(name.bold().fontsize(3)+"\r\n"+description)	
+					tooltip.html(name.bold().fontsize(3)+"\r\n"+description)	
 	                .style("left", (d3.event.pageX-280) + "px")		
 	                .style("top", (d3.event.pageY + 10) + "px");
 
-				occupationDescription.transition()		
+				tooltip.transition()		
 	                .duration(200)		
 	                .style("opacity", .9);	
 			    d3.selectAll(".occupationVQRHighlightBar1").remove();
-				// occupationVQRHighlightBar1=svg.selectAll(".occupationVQRHighlightBar1")
+				// occupationVQRHighlightBar1=centralChart.selectAll(".occupationVQRHighlightBar1")
 		  //           .data(occupationVQRBuff)
 		  //           .enter().append("g")
 		  //           .attr("class","occupationVQRHighlightBar1");
@@ -1180,6 +1278,7 @@ function clickOnOccupation(){
 //characteristics
 
 function majorCharacterChange(ID){
+	/*
 	var majorVQRBuff=[];
 	
 	var majorSAT = [];
@@ -1320,7 +1419,7 @@ function majorCharacterChange(ID){
 	d3.selectAll(".majorVQRBar").remove();
 
 
-	majorVQRBar=svg.selectAll(".majorVQRBar")
+	majorVQRBar=centralChart.selectAll(".majorVQRBar")
         .data(majorVQRBuff)
         .enter().append("g")
         .attr("class","majorVQRBar");
@@ -1338,23 +1437,19 @@ function majorCharacterChange(ID){
 
     majorVQRBar.selectAll("rect").transition().duration(500)
 		.style("opacity",0.9)
-		.attr("height",function (d,i,j) { return 40;});*/
-	majorSATbar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return SAT_relevantX+33+ (majorSAT[i]-800)*0.265;})
-		.attr("width",function(d,i){return (majorSAT[i+1]-majorSAT[i])*0.265;});
+		.attr("height",function (d,i,j) { return 40;});
+
 
 	majorGPAbar.select("rect").transition().duration(500)
 		.attr("x",function(d,i){return GPA_relevantX+33+ (majorGPA[i]-2.0)*90;})
 		.attr("width",function(d,i){return (majorGPA[i+1]-majorGPA[i])*90;});
+		*/
 
-	majorSalarybar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return MSalary_relevantX +33+ (majorSalary[i]-10000)*0.0023;})
-		.attr("width",function(d,i){return (majorSalary[i+1]-majorSalary[i])*0.0023;});
+
 };
 
 function occupationCharacterChange(ID){
-
-
+/*
 	var occupationVQRBuff=[];
 	var occupationSalary=[];
 
@@ -1409,7 +1504,7 @@ function occupationCharacterChange(ID){
 		occupationSalary75=parseInt(occupationSalary75/occupationLength);
 		occupationSalary90=parseInt(occupationSalary90/occupationLength);
 		occupationSalary.push(occupationSalary10,occupationSalary25, occupationSalary50, occupationSalary75,occupationSalary90);
-		console.log(occupationSalary)
+
 	}
 
 /*
@@ -1421,7 +1516,7 @@ function occupationCharacterChange(ID){
 	d3.selectAll(".occupationVQRBar").remove();
 
 
-	occupationVQRBar=svg.selectAll(".occupationVQRBar")
+	occupationVQRBar=centralChart.selectAll(".occupationVQRBar")
         .data(occupationVQRBuff)
         .enter().append("g")
         .attr("class","occupationVQRBar");
@@ -1441,9 +1536,7 @@ function occupationCharacterChange(ID){
 		.style("opacity",0.9)
 		.attr("height",function (d,i,j) { return 40;});*/
 
-	occupationSalarybar.select("rect").transition().duration(500)
-		.attr("x",function(d,i){return OSalary_relevantX + 33+(occupationSalary[i]-10000)*0.0023;})
-		.attr("width",function(d,i){return (occupationSalary[i+1]-occupationSalary[i])*0.0023;});
+	
 };
 
 //calculate RGB color for bars, VQR:0.0~1.0
@@ -1452,6 +1545,7 @@ function occupationCharacterChange(ID){
 //red - blue
 var colorRange=["#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4"];
 var colorScale=d3.scaleQuantile().range(colorRange).domain([-1,1]);
+
 
 function calculateVQRcolor(ID){
 	var VQRBuff=[];
@@ -1555,31 +1649,9 @@ function calculateVQRcolor(ID){
 	    	}
 	    }
 	}
-
-
-/*
-	if(search_click){
-		for (var i = 0; i < occupation_character_requirement.length; i++) {
-	    	if(occupation_character_requirement[i].occupationGroup == ID){
-	    		var vScore=occupation_character_requirement[i].verbalSkill;
-	    		var qScore=occupation_character_requirement[i].quantitativeSkill;
-
-	    		var eucliDis = Math.pow(Math.pow(vScore,2)+Math.pow(qScore,2),0.5);
-	    		var BrightScale=d3.scaleLinear().range(["#ffffff",colorScale((qScore-vScore)*10)]).domain([0,1.5]);
-
-
-	    		VQRBuff.push(BrightScale(eucliDis));
-	    		//VQRBuff.push(colorScale((qScore-vScore)*4));
-	    	}
-	    }
-	}*/
 	return VQRBuff;
+	
 }
-
-
-
-
-
 
 
 
@@ -1616,7 +1688,7 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 	}
 
 	var test=[0];
-	var mainPath = svg.selectAll(".mainPath")
+	var mainPath = centralChart.selectAll(".mainPath")
 		.data(test)
 		.enter().append("g")
 		.attr("class","mainPath");
@@ -1733,27 +1805,27 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 				    })
 				    .attr("id",function(d){
 				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
-				    		return college.name[i].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
+				    		return college.name[i].replace(/\s/g, '').replace(/ /g,'').replace(/,/g,'');
 				    		
 				    })
 				    .attr("ogid",function(d){
 				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
-				    		return occupationGroup.name[j].replace(/\s/g, '').replace(/ /g,'').replace(/','/g,'');
+				    		return occupationGroup.name[j].replace(/\s/g, '').replace(/ /g,'').replace(/,/g,'');
 				    		
 				    })
 				    .attr("cid",function(d){
 				    	if(college.click != "?" || search_click)
-					    	return major.name[i].replace(/\s/g, '').replace(/','/g,'').replace(/ /g,'');
+					    	return major.name[i].replace(/\s/g, '').replace(/,/g,'').replace(/ /g,'');
 				    })
 				    .attr("oid",function(d){
 				    	if(occupationGroup.click != "?" || search_click)
-				    		return occupation.name[j].replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+				    		return occupation.name[j].replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');
 				    })
 				    .attr("textnum",function(d){
 				    	return left_right_num;
 				    })
 				    /*
-				    .on("mouseover", function(d) {
+				    .on("click", function(d) {
 			            d3.selectAll(".mainPath").style("fill-opacity",0.4); 
 			            d3.select(this).style("fill-opacity",0.9);
 			            textY=(this.points[0].y+this.points[2].y)/2;
@@ -1785,7 +1857,40 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 				    .style("fill-opacity",0)
 				    .attr("class","mainPath");
 
-				mainPath.append("text").text("");
+
+				mainPath.append("text")
+					.text(function(d,i){
+							return (left_right_num);
+
+					})
+	            	.style("fill","white")
+	            	.style("font-size",18)
+					.style("font-weight","bold")						            	
+	            	.style("stroke","black")
+	            	.style("stroke-width",1)
+	            	.style("fill-opacity",1)
+	            	.attr("x",(first_x+third_x)/2)
+	            	.attr("y",(first_y+third_y)/2)
+	            	.attr("id",function(d){
+				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
+				    		return college.name[i].replace(/\s/g, '').replace(/ /g,'').replace(/,/g,'');
+				    		
+				    })
+				    .attr("ogid",function(d){
+				    	if(!search_click && college.click == "?" && occupationGroup.click == "?")
+				    		return occupationGroup.name[j].replace(/\s/g, '').replace(/ /g,'').replace(/,/g,'');
+				    		
+				    })
+				    .attr("cid",function(d){
+				    	if(college.click != "?" || search_click)
+					    	return major.name[i].replace(/\s/g, '').replace(/,/g,'').replace(/ /g,'');
+				    })
+				    .attr("oid",function(d){
+				    	if(occupationGroup.click != "?" || search_click)
+				    		return occupation.name[j].replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');
+				    })
+				    .attr("num",left_right_num)
+	            	.attr("visibility","hidden");
 
 
 			
@@ -1803,13 +1908,41 @@ function draw_path(left, right, number, left_list, left_number, left_x, left_y, 
 function find_college_occupationGroup(){
 	college_click = '?';
 	occupationGroup_click = '?';
+/*
+	d3.request(url)
+    .header("X-Requested-With", "XMLHttpRequest")
+    .header("Content-Type", "application/x-www-form-urlencoded")
+    .post("college="+college_click +"&occupationGroup="+occupationGroup_click, function(error,hr){
+			var x=hr.responseText.split("*");
+            var num1= parseInt(x[0]);
+			
+			education_job.education = [];
+			education_job.job = [];
+			education_job.number = [];
+			var k =1 ;
+			for (var i=0;i < num1;i++)
+			{
+		        education_job.education.push(x[k]);
+				k=k+1;
+				education_job.job.push(x[k]);
+				k=k+1;
+				education_job.number.push(parseInt(x[k]));
+				k=k+1;
+			}
+
+			draw_path(education_job.education,education_job.job, education_job.number,
+				      college.name,college.number, relevantX - 10, collegeX[0],  620, 
+ 					  occupationGroup.name,occupationGroup.number, relevantX + 290 ,occupationGroupX[0],620,
+ 					  college.style);
+		});
+*/
 
 	var hr = new XMLHttpRequest();
-	hr.open("POST", url, true);
+	hr.open("POST",url,true);
 	hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
 
-    hr.onreadystatechange = function() {
+	hr.onreadystatechange = function() {
 	    if(hr.readyState == 4 && hr.status == 200) {
 			///
 			
@@ -1838,6 +1971,7 @@ function find_college_occupationGroup(){
 
 		}
 	}
+
 };
 
 //draw different hierachical edges
@@ -1930,6 +2064,7 @@ function find_major_occupation(college_click, occupationGroup_click, startpoint,
 			        major.name, major.number, relevantX - 12.5, majorX[0],  458, 
 					    occupationGroup.name,occupationGroup.number, relevantX + 289.5 ,occupationGroupX[0],620,
 					    college.style);
+
 				}
 
 				//college to occupation
@@ -1938,8 +2073,10 @@ function find_major_occupation(college_click, occupationGroup_click, startpoint,
 			        college.name, college.number, relevantX - 10, collegeX[0],  620, 
 					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
 					    college.style);
+				
 			}
 
+			
 			//major to occupation
 			if(college_click!='?' && occupationGroup_click!='?'){
 				draw_path(education_job.education,education_job.job, education_job.number,
@@ -1947,1393 +2084,12 @@ function find_major_occupation(college_click, occupationGroup_click, startpoint,
 					    occupation.name,occupation.number, relevantX + 292.5 ,occupationX[0],460,
 					    college.style);
 			}
+
 	    }
 	}
 	hr.send("college="+college_click +"&occupationGroup="+occupationGroup_click);
 	//hr.send("major="+null+"&occupation="+null);	
-	switch(occupationGroup.click)
-	{
-		case("Agriculture"):min=0;max=3;maini=0;break;
-		case("Business"):min=4;max=31;maini=1;break;
-		case("Communication"):min=32;max=41;maini=2;break;
-		case("Computer"):min=42;max=50;maini=3;break;
-		case("Construction"):min=51;max=54;maini=4;break;
-		case("Education"):min=55;max=61;maini=5;break;
-		case("Engineering"):min=62;max=75;maini=6;break;
-		case("Healthcare"):min=76;max=82;maini=7;break;
-		case("Manufacturing"):min=83;max=87;maini=8;break;
-		case("Sales"):min=88;max=96;maini=9;break;
-		case("Science"):min=97;max=104;maini=10;break;
-		case("Services"):min=105;max=113;maini=11;break;
-		case("Social Services"):min=114;max=116;maini=12;break;
-	};
-	if(occupationGroup.click!='?')
-	{
-	//OSA
-	for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".OA")
-			.select("rect[id=occupationautomationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		return chart_base_y - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		return d * 1;
-				   })
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".OA")
-			.select("rect[id=occupationautomationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			//.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".OA")
-			.select("rect[id=occupationautomationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			//.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		return chart_base_y - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		return d * 1;
-				   })	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-		
-		
-	};
-	for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSA")
-			.select("rect[id=occupationsubautomationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		return d * 1;
-				   });
-			}
-		if(i < min){
-			d3.selectAll(".OSA")
-			.select("rect[id=occupationsubautomationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			//.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSA")
-			.select("rect[id=occupationsubautomationid"+i+"]")
-			.transition(200000)
-		    .duration(animationTime)
-			//.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSG
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".OG")
-			.select("rect[id=occupationglobalizationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*1-40;
-				   		return chart_base_y+40*1-40 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".OG")
-			.select("rect[id=occupationglobalizationid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*1-40 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".OG")
-			.select("rect[id=occupationglobalizationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*1-40;
-				   		return chart_base_y+40*1-40 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSG")
-			.select("rect[id=occupationsubglobalizationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*1-40;
-				   		return chart_base_y+40*1-40 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSG")
-			.select("rect[id=occupationsubglobalizationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*1-40 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSG")
-			.select("rect[id=occupationsubglobalizationid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*1-40 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-			//OSM
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".OM")
-			.select("rect[id=occupationmarriedid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*2;
-				   		return chart_base_y+40*2 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".OM")
-			.select("rect[id=occupationmarriedid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*2 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".OM")
-			.select("rect[id=occupationmarriedid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*2;
-				   		return chart_base_y+40*2 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSM")
-			.select("rect[id=occupationsubmairredid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*2;
-				   		return chart_base_y+40*2 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d *0.5;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSM")
-			.select("rect[id=occupationsubmairredid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*2 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSM")
-			.select("rect[id=occupationsubmairredid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / automation.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*2 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSblack
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".Oblack")
-			.select("rect[id=occupationblackPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*3;
-				   		return chart_base_y+40*3 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".Oblack")
-			.select("rect[id=occupationblackPercentid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*3 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".Oblack")
-			.select("rect[id=occupationblackPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*3;
-				   		return chart_base_y+40*3 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSblack")
-			.select("rect[id=occupationsubblackPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*3;
-				   		return chart_base_y+40*3 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSblack")
-			.select("rect[id=occupationsubblackPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / blackPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*3 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSblack")
-			.select("rect[id=occupationsubblackPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / blackPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*3 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSasian
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".Oasian")
-			.select("rect[id=occupationasianPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*4;
-				   		return chart_base_y+40*4 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".Oasian")
-			.select("rect[id=occupationasianPercentid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*4 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".Oasian")
-			.select("rect[id=occupationasianPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*4;
-				   		return chart_base_y+40*4 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSasian")
-			.select("rect[id=occupationsubasianPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*4;
-				   		return chart_base_y+40*4 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSasian")
-			.select("rect[id=occupationsubasianPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / asianPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*4 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSasian")
-			.select("rect[id=occupationsubasianPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / asianPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*4 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OShispanic
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".Ohispanic")
-			.select("rect[id=occupationhispanicPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*5;
-				   		return chart_base_y+40*5 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".Ohispanic")
-			.select("rect[id=occupationhispanicPercentid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*5 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".Ohispanic")
-			.select("rect[id=occupationhispanicPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*5;
-				   		return chart_base_y+40*5 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OShispanic")
-			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*5;
-				   		return chart_base_y+40*5 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OShispanic")
-			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / hispanicPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*5 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OShispanic")
-			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / hispanicPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*5 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSfemale
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".Ofemale")
-			.select("rect[id=occupationfemalePercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*6;
-				   		return chart_base_y+40*6 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".Ofemale")
-			.select("rect[id=occupationfemalePercentid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*6 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".Ofemale")
-			.select("rect[id=occupationfemalePercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*6;
-				   		return chart_base_y+40*6 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSfemale")
-			.select("rect[id=occupationsubfemalePercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*6;
-				   		return chart_base_y+40*6 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSfemale")
-			.select("rect[id=occupationsubfemalePercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / femalePercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*6 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSfemale")
-			.select("rect[id=occupationsubfemalePercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / femalePercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*6 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSforeignBorn
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".OforeignBorn")
-			.select("rect[id=occupationforeignBornPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*7;
-				   		return chart_base_y+40*7 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".OforeignBorn")
-			.select("rect[id=occupationforeignBornPercentid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*7 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".OforeignBorn")
-			.select("rect[id=occupationforeignBornPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*7;
-				   		return chart_base_y+40*7 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSforeignBorn")
-			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*7;
-				   		return chart_base_y+40*7 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSforeignBorn")
-			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / foreignBornPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*6 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSforeignBorn")
-			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / foreignBornPercent.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*7 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-		//OSaverageHoursOfWorkOrWeek
-		for (var i = 0; i < 13; i++) {
-		if (i <maini) {
-			d3.selectAll(".OaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*8;
-				   		return chart_base_y+40*8 - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-1);
-				   		return d * 1;
-				   })	
-			.attr("x",chart_base_x+w / 80*i)
-			.attr("width", w / 80 - 1);
-			}
-		if (i == maini) {
-			d3.selectAll(".OaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000) 
-		    .duration(animationTime)
-			.delay(500) 
-			.style("fill","red")
-			.attr("y", function(d) {
-				   		return chart_base_y+40*8 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   })
-			.attr("x",chart_base_x+w/2)
-			.attr("width", w / 80 - 1);
-			}
-		if (i >maini) {
-			d3.selectAll(".OaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   }) 
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*8;
-				   		return chart_base_y+40*8 - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-1);
-				   		return d * 1;
-			})	
-			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
-			.attr("width", w / 80 - 1);
-			}
-
-		}
-		for (var i = 0; i < 117; i++) {
-		if (i <= max&& min <= i) {
-			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("fill", function() {
-				
-				return subbarColor[i-min];
-
-				   })
-			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
-			.attr("width", (w-w / 80*26) / 28 - 1)
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*8;
-				   		return chart_base_y+40*8 - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-1);
-				   		return d * 1;
-				   })	
-			}
-		
-		if(i < min){
-			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
-			.attr("width", w / averageHoursOfWorkOrWeek.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*8 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-
-		if(i > max){
-			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(200000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("x",chart_base_x)
-			.attr("width", w / averageHoursOfWorkOrWeek.number.length - 1)
-			.attr("y", function(d) {
-				   		return chart_base_y+40*8 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-			}
-		}
-	}
-	else
-	{//OSA
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSA")
-			.select("rect[id=occupationsubautomationid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".OA")
-			.select("rect[id=occupationautomationid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		return chart_base_y - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		return d * 1;
-				   })
-			.attr("x",chart_base_x+i * (w / occupationautomation.number.length))
-			.attr("width", w / occupationautomation.number.length - 1);
-			
-		}
-		//OSG
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSG")
-			.select("rect[id=occupationsubglobalizationid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*1-40 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".OG")
-			.select("rect[id=occupationglobalizationid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*1-40;
-				   		return chart_base_y+40*1-40 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationglobalization.number.length))
-			.attr("width", w / occupationglobalization.number.length - 1);
-			
-		}
-		//OSM
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSM")
-			.select("rect[id=occupationsubmairredid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*2 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".OM")
-			.select("rect[id=occupationmarriedid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*2;
-				   		return chart_base_y+40*2 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationglobalization.number.length))
-			.attr("width", w / occupationglobalization.number.length - 1);
-			
-		}
-		//OSblack
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSblack")
-			.select("rect[id=occupationsubblackPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*3 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".Oblack")
-			.select("rect[id=occupationblackPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*3;
-				   		return chart_base_y+40*3 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationblackPercent.number.length))
-			.attr("width", w / occupationblackPercent.number.length - 1);
-			
-		}
-		//OSasian
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSasian")
-			.select("rect[id=occupationsubasianPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*4 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".Oasian")
-			.select("rect[id=occupationasianPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*4;
-				   		return chart_base_y+40*4 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationasianPercent.number.length))
-			.attr("width", w / occupationasianPercent.number.length - 1);
-			
-		}
-		//OShispanic
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OShispanic")
-			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*5 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".Ohispanic")
-			.select("rect[id=occupationhispanicPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*5;
-				   		return chart_base_y+40*5 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationhispanicPercent.number.length))
-			.attr("width", w / occupationhispanicPercent.number.length - 1);
-			
-		}
-		//OSfemale
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSfemale")
-			.select("rect[id=occupationsubfemalePercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*6 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".Ofemale")
-			.select("rect[id=occupationfemalePercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*6;
-				   		return chart_base_y+40*6 - (d * 0.5)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-0.5);
-				   		return d * 0.5;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationfemalePercent.number.length))
-			.attr("width", w / occupationfemalePercent.number.length - 1);
-			
-		}
-		//OSforeignBorn
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSforeignBorn")
-			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*7 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".OforeignBorn")
-			.select("rect[id=occupationforeignBornPercentid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*7;
-				   		return chart_base_y+40*7 - (d * 2)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-2);
-				   		return d * 2;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationforeignBornPercent.number.length))
-			.attr("width", w / occupationforeignBornPercent.number.length - 1);
-			
-		}
-		//OSaverageHoursOfWorkOrWeek
-		for (var i = 0; i < 117; i++) {
-			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.attr("y", function(d) {
-				   		return chart_base_y+40*8 ;
-				   })
-			.attr("height", function(d) {
-				   		return 0;
-				   });
-		}
-		for (var i = 0; i < 13; i++) {
-
-			d3.selectAll(".OaverageHoursOfWorkOrWeek")
-			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
-			.transition(20000)
-			.duration(animationTime)
-			.delay(500) 
-			.style("fill",function(d,i) {
-						return colors[color[i]];
-				   })
-			.attr("y", function(d) {
-				   		if(d<0) return chart_base_y+40*8;
-				   		return chart_base_y+40*8 - (d * 1)
-				   		})
-			.attr("height", function(d) {
-				   		if(d<0) return d * (-1);
-				   		return d * 1;
-				   })	
-			.attr("x",chart_base_x+i * (w / occupationaverageHoursOfWorkOrWeek.number.length))
-			.attr("width", w / occupationaverageHoursOfWorkOrWeek.number.length - 1);
-			
-		}
-	}
-
 };
-
 
 //Calculate Major/Occupation functions: 3
 function calculateMajor(n,x,k, college_click){
@@ -3427,8 +2183,9 @@ function calculateOccupation(n,x,k,college_click){
 				});
 		}	
 	}
-	return k;
+	return k;         	
 };
+
 
 function calculateMajorToOccupation(n,x,k,college_click,occupationGroup_click){
 
@@ -3496,7 +2253,7 @@ function calculateMajorToOccupation(n,x,k,college_click,occupationGroup_click){
         }
     }
     
-    return k;
+    //return k;
 };
 
 
@@ -3521,6 +2278,11 @@ var search_click = false;
 function searchFunction() {
 	d3.selectAll(".collegeCollapseButton").attr("visibility","visible");
 	d3.selectAll(".occupationCollapseButton").attr("visibility","visible");
+	if(college_click!='?')
+		collegeName.selectAll("text").remove();
+	if(occupationGroup_click!='?')
+		occupationName.selectAll("text").remove();
+
 	college_click='?';
 	occupationGroup_click='?';
 	college.click = "?";
@@ -3631,9 +2393,8 @@ function search_major_bar(major,startpoint){
 	//calclulate the college of majors
 	/*
 	calculateParentClass(major.college, majorX, majorWidth);
-	console.log(parentClassX,parentClassWidth)
 
-	var collegeSearchbar=svg.selectAll(".collegeSearchbar")
+	var collegeSearchbar=centralChart.selectAll(".collegeSearchbar")
         .data(parentClassName)
         .enter().append("g")
         .attr("class","collegeSearchbar");
@@ -3663,7 +2424,7 @@ function search_major_bar(major,startpoint){
         .attr("fill", colors[0])
         .on("click", clickOnCollegeMainbar);
 */
-	var collegeSubbar=svg.selectAll(".collegeSubbar")
+	var collegeSubbar=centralChart.selectAll(".collegeSubbar")
             .data(major.number)
             .enter().append("g")
             .attr("class","collegeSubbar");
@@ -3681,11 +2442,11 @@ function search_major_bar(major,startpoint){
             .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);		
-	            majorDescription.transition()		
+	            tooltip.transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".majorVQRHighlightBar").remove();
-	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/','/g,'')+"]")
+	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -3705,12 +2466,12 @@ function search_major_bar(major,startpoint){
             .on("mouseover", mouseoverMajor)
             .on("mouseout", function(d) {	
             //d3.selectAll(".mainPath").style("fill-opacity",0.9);	
-	            majorDescription.transition()		
+	            tooltip.transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".majorVQRHighlightBar").remove();
 
-	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/','/g,'')+"]")
+	            d3.select("#majorScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 
@@ -3766,7 +2527,7 @@ function search_occupation_bar(occupation,startpoint){
 
 
 
-	var occupationSubbar=svg.selectAll(".occupationSubbar")
+	var occupationSubbar=centralChart.selectAll(".occupationSubbar")
             .data(occupation.number)
             .enter().append("g")
             .attr("class","occupationSubbar");
@@ -3784,12 +2545,12 @@ function search_occupation_bar(occupation,startpoint){
 			.on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {		
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);
-	            occupationDescription.transition()		
+	            tooltip.transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
 
-	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]")
+	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -3810,11 +2571,11 @@ function search_occupation_bar(occupation,startpoint){
             .on("mouseover", mouseoverOccupation)
             .on("mouseout", function(d) {		
             	//d3.selectAll(".mainPath").style("fill-opacity",0.9);
-	            occupationDescription.transition()		
+	            tooltip.transition()		
 	                .duration(500)		
 	                .style("opacity", 0);
 	            d3.selectAll(".occupationVQRHighlightBar").remove();
-	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]")
+	            d3.select("#occupationScatterplot").selectAll("circle[id="+this.id.replace(/ /g,'').replace(/\//g,'').replace(/,/g,'')+"]")
 					.attr("stroke-width",1)
 					.attr("stroke", "black");
 	        });
@@ -3865,23 +2626,22 @@ function calculateParentClass(subclassOrder, subclassX, subclassWidth){
 function changeScatterplot(ID){
 	if(current == "college"){
 		ID=ID.replace(/\s/g,'').replace(/\//g,'');
-		d3.selectAll(".majorDot").style("fill-opacity",0.2).attr("stroke-width",0);
+		d3.selectAll(".majorDot").style("fill-opacity",0.35).attr("stroke-width",0);
 			d3.select("#majorScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");
 	}
 	if(current == "occupationGroup"){
 		ID=ID.replace(/\s/g,'').replace(/\//g,'');
-		d3.selectAll(".occupationDot").style("fill-opacity",0.3).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").style("fill-opacity",0.35).attr("stroke-width",0);
 	d3.select("#occupationScatterplot").selectAll("circle[gid="+ID+"]").transition().duration(animationTime).style("fill-opacity",1)
 		.attr("stroke-width",1)
 		.attr("stroke", "black");	
 	}
 	if(current == "searchMajor"){
-		d3.selectAll(".majorDot").style("fill-opacity",0.3).attr("stroke-width",0);
+		d3.selectAll(".majorDot").style("fill-opacity",0.35).attr("stroke-width",0);
 		for (var i = 0; i < ID.length; i++) {
-			console.log(ID)
-			d3.select("#majorScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
+			d3.select("#majorScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/,/g,'')+"]").transition().duration(animationTime)
 				.style("fill-opacity",1)
 				.attr("stroke-width",1)
 				.attr("stroke", "black");
@@ -3889,10 +2649,9 @@ function changeScatterplot(ID){
 		current = '';
 	}
 	if(current == "searchOccupation"){
-		d3.selectAll(".occupationDot").style("fill-opacity",0.3).attr("stroke-width",0);
+		d3.selectAll(".occupationDot").style("fill-opacity",0.35).attr("stroke-width",0);
 		for (var i = 0; i < ID.length; i++) {
-			console.log(ID)
-			d3.select("#occupationScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/\//g,'').replace(/','/g,'')+"]").transition().duration(animationTime)
+			d3.select("#occupationScatterplot").selectAll("circle[id="+ID[i].replace(/ /g,'').replace(/\//g,'').replace(/,/g,'')+"]").transition().duration(animationTime)
 				.style("fill-opacity",1)
 				.attr("stroke-width",1)
 				.attr("stroke", "black");
@@ -3955,7 +2714,7 @@ function createScatterplot(scatter,character,ifmajor){
      gY.selectAll("line").attr("stroke", "#70ABD0");
      gY.selectAll("path").attr("stroke", "#70ABD0");
 
-	var scatterTooltip = d3.select("body").append("div")	
+	var tooltip = d3.select("body").append("div")	
 	    .attr("class", "tooltip")				
 	    .style("opacity", 0);
 
@@ -3967,9 +2726,9 @@ function createScatterplot(scatter,character,ifmajor){
       .data(character)
       .enter().append("circle")
       .attr("id",function(d){
-      	return (ifmajor ? d.major : d.occupation).replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');
+      	return (ifmajor ? d.major : d.occupation).replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');
       })
-      .attr("gid",function(d){return (ifmajor ? d.college : d.occupationGroup).replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/','/g,'');})
+      .attr("gid",function(d){return (ifmajor ? d.college : d.occupationGroup).replace(/\s/g, '').replace(/\//g,'').replace(/ /g,'').replace(/,/g,'');})
       .classed(dotType, true)
       .attr("r", function (d) { return Math.pow(d.observations*0.5,0.3); })
       .attr("transform", function (d) { return "translate(" + (x(d.verbalSkill)+plotpadding) + "," + y(d.quantitativeSkill) + ")";})
@@ -3983,17 +2742,17 @@ function createScatterplot(scatter,character,ifmajor){
 
       })
       .on("mouseover", function(d){
-  	    scatterTooltip.transition()		
+  	    tooltip.transition()		
             .duration(200)		
             .style("opacity", .9);		
 
         if(ifmajor){
-	        scatterTooltip.html("Major: <b>"+d.major +"</b><br>College: <b>"+d.college +"</b><br><br><b>"+xLabel + "</b>: " + d.verbalSkill + "<br><b>" + yLabel + "</b>: " + d.quantitativeSkill)	
+	        tooltip.html("Major: <b>"+d.major +"</b><br>College: <b>"+d.college +"</b><br><br><b>"+xLabel + "</b>: " + d.verbalSkill + "<br><b>" + yLabel + "</b>: " + d.quantitativeSkill)	
 	            .style("left", (d3.event.pageX) + "px")		
 	            .style("top", (d3.event.pageY) + "px");	
         }
         if(!ifmajor){
-        	scatterTooltip.html("Occupation: <b>"+d.occupation+"</b><br>OccupationGroup: "+d.occupationGroup+"</b><br><br><b>"+xLabel + "</b>: " + d.verbalSkill + "<br><b>" + yLabel + "</b>: " + d.quantitativeSkill)	
+        	tooltip.html("Occupation: <b>"+d.occupation+"</b><br>OccupationGroup: "+d.occupationGroup+"</b><br><br><b>"+xLabel + "</b>: " + d.verbalSkill + "<br><b>" + yLabel + "</b>: " + d.quantitativeSkill)	
             .style("left", (d3.event.pageX -260) + "px")		
             .style("top", (d3.event.pageY) + "px");	
         }
@@ -4003,7 +2762,7 @@ function createScatterplot(scatter,character,ifmajor){
 					.attr("stroke", "black");
       })
       .on("mouseout", function(d){
-	       scatterTooltip.transition()		
+	       tooltip.transition()		
 	        .duration(200)		
 	        .style("opacity", .0);
 
@@ -4048,4 +2807,2056 @@ function showResult(str) {
   }
   xmlhttp.open("GET","livesearch.php?q="+str,true);
   xmlhttp.send();
+};
+
+function occupationsidebar(subbarColor){
+	
+switch(occupationGroup.click)
+	{
+		case("Agriculture"):min=0;max=3;maini=0;break;
+		case("Business"):min=4;max=31;maini=1;break;
+		case("Communication"):min=32;max=41;maini=2;break;
+		case("Computer"):min=42;max=50;maini=3;break;
+		case("Construction"):min=51;max=54;maini=4;break;
+		case("Education"):min=55;max=61;maini=5;break;
+		case("Engineering"):min=62;max=75;maini=6;break;
+		case("Healthcare"):min=76;max=82;maini=7;break;
+		case("Manufacturing"):min=83;max=87;maini=8;break;
+		case("Sales"):min=88;max=96;maini=9;break;
+		case("Science"):min=97;max=104;maini=10;break;
+		case("Services"):min=105;max=113;maini=11;break;
+		case("Social Services"):min=114;max=116;maini=12;break;
+	};
+
+	if(occupationGroup.click!='?')
+	{
+	//OSA
+	for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".OA")
+			.select("rect[id=occupationautomationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		return chart_base_y - (d * 1)+20;
+				   		})
+			.attr("height", function(d) {
+				   		return d * 1;
+				   })
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".OA")
+			.select("rect[id=occupationautomationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			//.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y +20;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".OA")
+			.select("rect[id=occupationautomationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			//.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		return chart_base_y - (d * 1)+20;
+				   		})
+			.attr("height", function(d) {
+				   		return d * 1;
+				   })	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+		
+		
+	};
+	for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSA")
+			.select("rect[id=occupationsubautomationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			//.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / automation.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSA")
+			.select("rect[id=occupationsubautomationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y - (d * 1)+20;
+				   		})
+			.attr("height", function(d) {
+				   		return d * 1;
+				   });
+			}
+		
+		}
+		//OSG
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".OG")
+			.select("rect[id=occupationglobalizationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+(accordion_bar_height+5)*1-20;
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 - (d * 0.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.5);
+				   		return d * 0.5;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".OG")
+			.select("rect[id=occupationglobalizationid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".OG")
+			.select("rect[id=occupationglobalizationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+(accordion_bar_height+5)*1-20;
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 - (d * 0.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.5);
+				   		return d * 0.5;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSG")
+			.select("rect[id=occupationsubglobalizationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / automation.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSG")
+			.select("rect[id=occupationsubglobalizationid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+(accordion_bar_height+5)*1-20;
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 - (d * 0.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.5);
+				   		return d * 0.5;
+				   })	
+			}
+		
+		
+		}
+			//OSM
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".OM")
+			.select("rect[id=occupationmarriedid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*2;
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".OM")
+			.select("rect[id=occupationmarriedid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".OM")
+			.select("rect[id=occupationmarriedid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*2;
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSM")
+			.select("rect[id=occupationsubmairredid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / automation.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSM")
+			.select("rect[id=occupationsubmairredid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*2;
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d *0.75;
+				   })	
+			}
+		
+		
+
+		}
+		//OSblack
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".Oblack")
+			.select("rect[id=occupationblackPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*3;
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".Oblack")
+			.select("rect[id=occupationblackPercentid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".Oblack")
+			.select("rect[id=occupationblackPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*3;
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSblack")
+			.select("rect[id=occupationsubblackPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / blackPercent.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSblack")
+			.select("rect[id=occupationsubblackPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*3;
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			}
+		
+		
+
+		}
+		//OSasian
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".Oasian")
+			.select("rect[id=occupationasianPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*4;
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".Oasian")
+			.select("rect[id=occupationasianPercentid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".Oasian")
+			.select("rect[id=occupationasianPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*4;
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSasian")
+			.select("rect[id=occupationsubasianPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / asianPercent.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSasian")
+			.select("rect[id=occupationsubasianPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*4;
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			}
+		
+		
+		}
+		//OShispanic
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".Ohispanic")
+			.select("rect[id=occupationhispanicPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*5;
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".Ohispanic")
+			.select("rect[id=occupationhispanicPercentid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".Ohispanic")
+			.select("rect[id=occupationhispanicPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*5;
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OShispanic")
+			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / hispanicPercent.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OShispanic")
+			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*5;
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			}
+		
+		
+
+		}
+		//OSfemale
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".Ofemale")
+			.select("rect[id=occupationfemalePercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*6;
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".Ofemale")
+			.select("rect[id=occupationfemalePercentid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".Ofemale")
+			.select("rect[id=occupationfemalePercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*6;
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSfemale")
+			.select("rect[id=occupationsubfemalePercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / femalePercent.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSfemale")
+			.select("rect[id=occupationsubfemalePercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*6;
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+				   })	
+			}
+		
+		
+
+		}
+		//OSforeignBorn
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".OforeignBorn")
+			.select("rect[id=occupationforeignBornPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*7;
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".OforeignBorn")
+			.select("rect[id=occupationforeignBornPercentid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".OforeignBorn")
+			.select("rect[id=occupationforeignBornPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*7;
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+
+		if (i <= oldmax&& oldmin <= i){
+		d3.selectAll(".OSforeignBorn")
+		.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
+		.transition(200000)
+		.duration(animationTime)
+		.delay(500) 
+		.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+		.attr("width", w / foreignBornPercent.number.length - 1)
+		.attr("y", function(d) {
+			   		return chart_base_y+20+(accordion_bar_height+5)*7 ;
+			   })
+		.attr("height", function(d) {
+			   		return 0;
+			   });
+		}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSforeignBorn")
+			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*7;
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			}
+		
+		
+
+		}
+		//OSaverageHoursOfWorkOrWeek
+		for (var i = 0; i < 13; i++) {
+		if (i <maini) {
+			d3.selectAll(".OaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*8;
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 - (d * 1.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-1.5);
+				   		return d * 1.5;
+				   })	
+			.attr("x",chart_base_x+w / 80*i)
+			.attr("width", w / 80 - 1);
+			}
+		if (i == maini) {
+			d3.selectAll(".OaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.style("fill","red")
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i >maini) {
+			d3.selectAll(".OaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   }) 
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*8;
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 - (d * 1.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-1.5);
+				   		return d * 1.5;
+			})	
+			.attr("x",chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80)
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117; i++) {
+		if (i <= oldmax&& oldmin <= i){
+			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",chart_base_x+i*((14-(max-min)/2)*(w / 28) / min))
+			.attr("width", w / averageHoursOfWorkOrWeek.number.length - 1)
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+			}
+		if (i <= max&& min <= i) {
+			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				
+				return subbarColor[i-min];
+
+				   })
+			.attr("x",chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i-min) * (w-w / 80*26) / 28)
+			.attr("width", (w-w / 80*26) / 28 - 1)
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*8;
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 - (d * 1.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-1.5);
+				   		return d * 1.5;
+				   })	
+			}
+		
+		
+
+		}
+		//suboccupationSalarybar
+		for (var i = 0; i < 13*4; i++) {
+		if (i%13 <maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+w / 80*i;
+            	else if(i>=13&&i<26) return chart_base_x+w / 80*(i-13);
+            	else if(i>=26&&i<39) return chart_base_x+w / 80*(i-26);
+            	else if(i>=39&&i<52) return chart_base_x+w / 80*(i-39);
+			})
+			.attr("height", function(d) {
+				if(i<13) return (d.salary75-d.salary25) * 0.0015;
+            	else if(i>=13&&i<26) (d.salary90-d.salary75)* 0.0015;
+            	else if(i>=26&&i<39) return 2;
+            	else if(i>=39&&i<52) (d.salary25-d.salary10)* 0.0015;
+			})
+			.attr("width", w / 80 - 1);
+			}
+		if (i%13 == maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_x+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i%13 >maini) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+w-(12-maini)*w / 80+(i-maini)*w / 80;
+            	else if(i>=13&&i<26) return chart_base_x+w-(12-maini)*w / 80+(i-13-maini)*w / 80;
+            	else if(i>=26&&i<39) return chart_base_x+w-(12-maini)*w / 80+(i-26-maini)*w / 80;
+            	else if(i>=39&&i<52) return chart_base_x+w-(12-maini)*w / 80+(i-39-maini)*w / 80;
+			})
+			.attr("height", function(d) {
+				if(i<13) return (d.salary75-d.salary25) * 0.0015;
+            	else if(i>=13&&i<26) (d.salary90-d.salary75)* 0.0015;
+            	else if(i>=26&&i<39) return 2;
+            	else if(i>=39&&i<52) (d.salary25-d.salary10)* 0.0015;
+			})
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 117*4; i++) {
+
+		if (i%117 <= oldmax&& oldmin <= i%117) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<117)return "white";
+            	else if(i>=117&&i<117*2) return "white";
+            	else if(i>=117*2&&i<117*3) return "white";
+            	else if(i>=117*3&&117*4) return "white";
+				   })
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return 0;
+            			else if(i>=117&&i<117*2) return 0;
+            			else if(i>=117*2&&i<117*3) return 0;
+            			else if(i>=117*3&&i<117*4) return 0;
+				   });
+			}
+		if (i%117 <= max&& min <= i%117) {
+			d3.selectAll(".suboccupationSalarybar")
+			.select("rect[id=suboccupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<117)return subbarColor[i%117-min];
+            	else if(i>=117&&i<117*2) return subbarColor[i%117-min];
+            	else if(i>=117*2&&i<117*3) return "black";
+            	else if(i>=117*3&&117*4) return subbarColor[i%117-min];
+				   })
+			.attr("x",function(d) {
+				if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min) * (w-w / 80*26) / 28;
+            	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min+0.5) * (w-w / 80*26) / 28-1;
+            	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min) * (w-w / 80*26) / 28;
+            	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%117-min+0.5) * (w-w / 80*26) / 28-1;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<117)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117&&i<117*2) return 2;
+            	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=117*3&&i<117*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<117)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=117&&i<117*2) return (d.salary90-d.salary75)* 0.0015;
+            			else if(i>=117*2&&i<117*3) return 2;
+            			else if(i>=117*3&&i<117*4) return (d.salary25-d.salary10)* 0.0015;
+				   });
+			}
+		
+		
+		
+		}
+		
+		
+	}
+	else
+	{//OSA
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSA")
+			.select("rect[id=occupationsubautomationid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y +20;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".OA")
+			.select("rect[id=occupationautomationid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		return chart_base_y - (d * 1)+20;
+				   		})
+			.attr("height", function(d) {
+				   		return d * 1;
+				   })
+			.attr("x",chart_base_x+i * (w / occupationautomation.number.length))
+			.attr("width", w / occupationautomation.number.length - 1);
+			
+		}
+		//OSG
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSG")
+			.select("rect[id=occupationsubglobalizationid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".OG")
+			.select("rect[id=occupationglobalizationid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+(accordion_bar_height+5)*1-20;
+				   		return chart_base_y+(accordion_bar_height+5)*1-20 - (d * 0.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.5);
+				   		return d * 0.5;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationglobalization.number.length))
+			.attr("width", w / occupationglobalization.number.length - 1);
+			
+		}
+		//OSM
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSM")
+			.select("rect[id=occupationsubmairredid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".OM")
+			.select("rect[id=occupationmarriedid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*2;
+				   		return chart_base_y+20+(accordion_bar_height+5)*2 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationglobalization.number.length))
+			.attr("width", w / occupationglobalization.number.length - 1);
+			
+		}
+		//OSblack
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSblack")
+			.select("rect[id=occupationsubblackPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".Oblack")
+			.select("rect[id=occupationblackPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*3;
+				   		return chart_base_y+20+(accordion_bar_height+5)*3 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationblackPercent.number.length))
+			.attr("width", w / occupationblackPercent.number.length - 1);
+			
+		}
+		//OSasian
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSasian")
+			.select("rect[id=occupationsubasianPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".Oasian")
+			.select("rect[id=occupationasianPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*4;
+				   		return chart_base_y+20+(accordion_bar_height+5)*4 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationasianPercent.number.length))
+			.attr("width", w / occupationasianPercent.number.length - 1);
+			
+		}
+		//OShispanic
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OShispanic")
+			.select("rect[id=occupationsubhispanicPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".Ohispanic")
+			.select("rect[id=occupationhispanicPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*5;
+				   		return chart_base_y+20+(accordion_bar_height+5)*5 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationhispanicPercent.number.length))
+			.attr("width", w / occupationhispanicPercent.number.length - 1);
+			
+		}
+		//OSfemale
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSfemale")
+			.select("rect[id=occupationsubfemalePercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".Ofemale")
+			.select("rect[id=occupationfemalePercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*6;
+				   		return chart_base_y+20+(accordion_bar_height+5)*6 - (d * 0.75)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-0.75);
+				   		return d * 0.75;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationfemalePercent.number.length))
+			.attr("width", w / occupationfemalePercent.number.length - 1);
+			
+		}
+		//OSforeignBorn
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSforeignBorn")
+			.select("rect[id=occupationsubforeignBornPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".OforeignBorn")
+			.select("rect[id=occupationforeignBornPercentid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*7;
+				   		return chart_base_y+20+(accordion_bar_height+5)*7 - (d * 3)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-3);
+				   		return d * 3;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationforeignBornPercent.number.length))
+			.attr("width", w / occupationforeignBornPercent.number.length - 1);
+			
+		}
+		//OSaverageHoursOfWorkOrWeek
+		for (var i = oldmin; i <= oldmax; i++) {
+			d3.selectAll(".OSaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationsubaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("y", function(d) {
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 ;
+				   })
+			.attr("height", function(d) {
+				   		return 0;
+				   });
+		}
+		for (var i = 0; i < 13; i++) {
+
+			d3.selectAll(".OaverageHoursOfWorkOrWeek")
+			.select("rect[id=occupationaverageHoursOfWorkOrWeekid"+i+"]")
+			.transition(20000)
+			.duration(animationTime)
+			.delay(500) 
+			.style("fill",function(d,i) {
+						return colors[color[i]];
+				   })
+			.attr("y", function(d) {
+				   		if(d<0) return chart_base_y+20+(accordion_bar_height+5)*8;
+				   		return chart_base_y+20+(accordion_bar_height+5)*8 - (d * 1.5)
+				   		})
+			.attr("height", function(d) {
+				   		if(d<0) return d * (-1.5);
+				   		return d * 1.5;
+				   })	
+			.attr("x",chart_base_x+i * (w / occupationaverageHoursOfWorkOrWeek.number.length))
+			.attr("width", w / occupationaverageHoursOfWorkOrWeek.number.length - 1);
+			
+		}
+		//suboccupationsalary
+		for (var i = 0; i < 13*4; i++) {
+			d3.selectAll(".occupationSalarybar")
+			.select("rect[id=occupationSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		if(i<13)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=13&&i<26) return (d.salary90-d.salary75)* 0.0015;
+            			else if(i>=26&&i<39) return 2;
+            			else if(i>=39&&i<52) return (d.salary25-d.salary10)* 0.0015;
+				   })
+			.attr("x",function(d) {
+				if(i<13)return chart_base_x+i * (w / Salarybarlength);
+            	else if(i>=13&&i<26) return chart_base_x+(i-13+0.5) * (w / Salarybarlength)-0.5-1;
+            	else if(i>=26&&i<39) return chart_base_x+(i-26) * (w / Salarybarlength);
+            	else if(i>=39&&i<52) return chart_base_x+(i-39+0.5) * (w / Salarybarlength)-0.5-1;
+			})
+			.attr("width", function(d) { 
+            if(i<13) return w / Salarybarlength - 1;
+            else if(i>=13&&i<26) return 2;
+            else if(i>=26&&i<39) return (w / Salarybarlength) - 1;
+            else if(i>=39&&i<52) return 2;
+          	});
+		}
+		for (var i = 0; i < 117*4; i++) {
+			if (i%117 <= oldmax&& oldmin <= i%117) {
+				d3.selectAll(".suboccupationSalarybar")
+				.select("rect[id=suboccupationSalarybarid"+i+"]")
+				.transition(200000)
+				.duration(animationTime)
+				.delay(500) 
+				.attr("x",function(d) {
+					if(i<117)return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=117&&i<117*2) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=117*2&&i<117*3) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=117*3&&i<117*4) return chart_base_x+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	
+				 })
+				.attr("width",function(d) {
+					if(i<117)return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=117&&i<117*2) return 2;
+		        	else if(i>=117*2&&i<117*3) return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=117*3&&i<117*4) return 2;
+		        	
+				 }) 
+				.attr("height", function(d) {
+					   		if(i<117)return 0;
+		        			else if(i>=117&&i<117*2) return 0;
+		        			else if(i>=117*2&&i<117*3) return 0;
+		        			else if(i>=117*3&&i<117*4) return 0;
+				});
+			}
+
+		}
+	}
+	oldmin=min;oldmax=max;oldmaini=maini
+};
+
+function majorsidebar(subbarColor){
+	
+switch(college.click)
+	{
+		case("Agriculture"):min=0;max=17;maini=0;break;
+		case("Education"):min=18;max=26;maini=1;break;
+		case("Engineering"):min=27;max=41;maini=2;break;
+		case("Health and Human Sciences"):min=42;max=60;maini=3;break;
+		case("Liberal Arts"):min=61;max=78;maini=4;break;
+		case("Management"):min=79;max=81;maini=5;break;
+		case("Pharmacy"):min=82;max=82;maini=6;break;
+		case("Science"):min=83;max=94;maini=7;break;
+		case("Technology"):min=95;max=106;maini=8;break;
+		case("Veterinary Medicine"):min=107;max=107;maini=9;break;
+	};
+
+	if(college.click!='?')
+	{
+	
+		//submajorSalarybar
+		for (var i = 0; i < 10*4; i++) {
+		if (i%10 <maini) {
+			d3.selectAll(".majorSalarybar")
+			.select("rect[id=majorSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w / 80*i;
+            	else if(i>=10&&i<20) return chart_base_xl+w / 80*(i-10);
+            	else if(i>=20&&i<30) return chart_base_xl+w / 80*(i-20);
+            	else if(i>=30&&i<40) return chart_base_xl+w / 80*(i-30);
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.salary75-d.salary25) * 0.0015;
+            	else if(i>=10&&i<20) (d.salary90-d.salary75)* 0.0015;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.salary25-d.salary10)* 0.0015;
+			})
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 == maini) {
+			d3.selectAll(".majorSalarybar")
+			.select("rect[id=majorSalarybarid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_xl+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 >maini) {
+			d3.selectAll(".majorSalarybar")
+			.select("rect[id=majorSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w-(12-maini)*w / 80+(i-maini)*w / 80;
+            	else if(i>=10&&i<20) return chart_base_xl+w-(12-maini)*w / 80+(i-10-maini)*w / 80;
+            	else if(i>=20&&i<30) return chart_base_xl+w-(12-maini)*w / 80+(i-20-maini)*w / 80;
+            	else if(i>=30&&i<40) return chart_base_xl+w-(12-maini)*w / 80+(i-30-maini)*w / 80;
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.salary75-d.salary25) * 0.0015;
+            	else if(i>=10&&i<20) (d.salary90-d.salary75)* 0.0015;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.salary25-d.salary10)* 0.0015;
+			})
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 108*4; i++) {
+
+		
+		if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+			d3.selectAll(".submajorSalarybar")
+			.select("rect[id=submajorSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return "white";
+            	else if(i>=108&&i<108*2) return "white";
+            	else if(i>=108*2&&i<108*3) return "white";
+            	else if(i>=108*3&&i<108*4) return "white";
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return 0;
+            			else if(i>=108&&i<108*2) return 0;
+            			else if(i>=108*2&&i<108*3) return 0;
+            			else if(i>=108*3&&i<108*4) return 0;
+				   });
+			}
+		
+		if (i%108 <= max&& min <= i%108) {
+			d3.selectAll(".submajorSalarybar")
+			.select("rect[id=submajorSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return subbarColor[i%108-min];
+            	else if(i>=108&&i<108*2) return subbarColor[i%108-min];
+            	else if(i>=108*2&&i<108*3) return "black";
+            	else if(i>=108*3&&108*4) return subbarColor[i%108-min];
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=108&&i<108*2) return (d.salary90-d.salary75)* 0.0015;
+            			else if(i>=108*2&&i<108*3) return 2;
+            			else if(i>=108*3&&i<108*4) 
+            			{
+            				if((d.salary25-d.salary10)<1.5*(d.salary75-d.salary25)) {return (d.salary25-d.salary10)* 0.0015;}
+            				else { return 1.5*(d.salary75-d.salary25)* 0.0015;}
+            			}
+				   });
+			}
+
+		}//end of submajorSalarybar
+		
+		//submajorGPAbar
+		for (var i = 0; i < 10*4; i++) {
+		if (i%10 <maini) {
+			d3.selectAll(".majorGPAbar")
+			.select("rect[id=majorGPAbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w / 80*i;
+            	else if(i>=10&&i<20) return chart_base_xl+w / 80*(i-10);
+            	else if(i>=20&&i<30) return chart_base_xl+w / 80*(i-20);
+            	else if(i>=30&&i<40) return chart_base_xl+w / 80*(i-30);
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.GPA75-d.GPA25) * 30;
+            	else if(i>=10&&i<20) (d.GPA90-d.GPA75)* 30;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.GPA25-d.GPA10)* 30;
+			})
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 == maini) {
+			d3.selectAll(".majorGPAbar")
+			.select("rect[id=majorGPAbarid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_xl+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 >maini) {
+			d3.selectAll(".majorGPAbar")
+			.select("rect[id=majorGPAbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w-(12-maini)*w / 80+(i-maini)*w / 80;
+            	else if(i>=10&&i<20) return chart_base_xl+w-(12-maini)*w / 80+(i-10-maini)*w / 80;
+            	else if(i>=20&&i<30) return chart_base_xl+w-(12-maini)*w / 80+(i-20-maini)*w / 80;
+            	else if(i>=30&&i<40) return chart_base_xl+w-(12-maini)*w / 80+(i-30-maini)*w / 80;
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.GPA75-d.GPA25) * 30;
+            	else if(i>=10&&i<20) (d.GPA90-d.GPA75)* 30;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.GPA25-d.GPA10)* 30;
+			})
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 108*4; i++) {
+
+		
+		if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+			d3.selectAll(".submajorGPAbar")
+			.select("rect[id=submajorGPAbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return "white";
+            	else if(i>=108&&i<108*2) return "white";
+            	else if(i>=108*2&&i<108*3) return "white";
+            	else if(i>=108*3&&i<108*4) return "white";
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return 0;
+            			else if(i>=108&&i<108*2) return 0;
+            			else if(i>=108*2&&i<108*3) return 0;
+            			else if(i>=108*3&&i<108*4) return 0;
+				   });
+			}
+		
+		if (i%108 <= max&& min <= i%108) {
+			d3.selectAll(".submajorGPAbar")
+			.select("rect[id=submajorGPAbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return subbarColor[i%108-min];
+            	else if(i>=108&&i<108*2) return subbarColor[i%108-min];
+            	else if(i>=108*2&&i<108*3) return "black";
+            	else if(i>=108*3&&108*4) return subbarColor[i%108-min];
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return (d.GPA75-d.GPA25) * 30;
+            			else if(i>=108&&i<108*2) return (d.GPA90-d.GPA75)* 30;
+            			else if(i>=108*2&&i<108*3) return 2;
+            			else if(i>=108*3&&i<108*4) 
+            			{
+            				if((d.GPA25-d.GPA10)<1.5*(d.GPA75-d.GPA25)){ return (d.GPA25-d.GPA10)* 30;}
+            				else {return 1.5*(d.GPA75-d.GPA25)* 30;}
+            			}
+				   });
+			}
+
+		}//end of submajorGPAbar
+
+		//submajorSATbar
+		for (var i = 0; i < 10*4; i++) {
+		if (i%10 <maini) {
+			d3.selectAll(".majorSATbar")
+			.select("rect[id=majorSATbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w / 80*i;
+            	else if(i>=10&&i<20) return chart_base_xl+w / 80*(i-10);
+            	else if(i>=20&&i<30) return chart_base_xl+w / 80*(i-20);
+            	else if(i>=30&&i<40) return chart_base_xl+w / 80*(i-30);
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.SAT75-d.SAT25) * 0.1;
+            	else if(i>=10&&i<20) (d.SAT90-d.SAT75)* 0.1;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.SAT25-d.SAT10)* 0.1;
+			})
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 == maini) {
+			d3.selectAll(".majorSATbar")
+			.select("rect[id=majorSATbarid"+i+"]")
+			.transition(200000) 
+		    .duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		return 0;
+				   })
+			.attr("x",chart_base_xl+w/2)
+			.attr("width", w / 80 - 1);
+			}
+		if (i%10 >maini) {
+			d3.selectAll(".majorSATbar")
+			.select("rect[id=majorSATbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+w-(12-maini)*w / 80+(i-maini)*w / 80;
+            	else if(i>=10&&i<20) return chart_base_xl+w-(12-maini)*w / 80+(i-10-maini)*w / 80;
+            	else if(i>=20&&i<30) return chart_base_xl+w-(12-maini)*w / 80+(i-20-maini)*w / 80;
+            	else if(i>=30&&i<40) return chart_base_xl+w-(12-maini)*w / 80+(i-30-maini)*w / 80;
+			})
+			.attr("height", function(d) {
+				if(i<10) return (d.SAT75-d.SAT25) * 0.1;
+            	else if(i>=10&&i<20) (d.SAT90-d.SAT75)* 0.1;
+            	else if(i>=20&&i<30) return 2;
+            	else if(i>=30&&i<40) (d.SAT25-d.SAT10)* 0.1;
+			})
+			.attr("width", w / 80 - 1);
+			}
+
+		}
+		for (var i = 0; i < 108*4; i++) {
+
+		
+		if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+			d3.selectAll(".submajorSATbar")
+			.select("rect[id=submajorSATbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return "white";
+            	else if(i>=108&&i<108*2) return "white";
+            	else if(i>=108*2&&i<108*3) return "white";
+            	else if(i>=108*3&&i<108*4) return "white";
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return 0;
+            			else if(i>=108&&i<108*2) return 0;
+            			else if(i>=108*2&&i<108*3) return 0;
+            			else if(i>=108*3&&i<108*4) return 0;
+				   });
+			}
+		
+		if (i%108 <= max&& min <= i%108) {
+			d3.selectAll(".submajorSATbar")
+			.select("rect[id=submajorSATbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("fill", function() {
+				if(i<108)return subbarColor[i%108-min];
+            	else if(i>=108&&i<108*2) return subbarColor[i%108-min];
+            	else if(i>=108*2&&i<108*3) return "black";
+            	else if(i>=108*3&&108*4) return subbarColor[i%108-min];
+				   })
+			.attr("x",function(d) {
+				if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min) * (w-w / 80*26) / 28;
+            	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28+(i%108-min+0.5) * (w-w / 80*26) / 28-1;
+            	
+			 })
+			.attr("width",function(d) {
+				if(i<108)return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108&&i<108*2) return 2;
+            	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+            	else if(i>=108*3&&i<108*4) return 2;
+            	
+			 }) 
+			.attr("height", function(d) {
+				   		if(i<108)return (d.SAT75-d.SAT25) * 0.1;
+            			else if(i>=108&&i<108*2) return (d.SAT90-d.SAT75)* 0.1;
+            			else if(i>=108*2&&i<108*3) return 2;
+            			else if(i>=108*3&&i<108*4) 
+            			{
+            				if((d.SAT25-d.SAT10)<1.5*(d.SAT75-d.SAT25)) {return (d.SAT25-d.SAT10)* 0.1;}
+            				else { return 1.5*(d.SAT75-d.SAT25)* 0.1;}
+            			}
+				   });
+			}
+
+		}//end of submajorSATbar
+
+		
+	}
+	else
+	{
+		//suboccupationsalary
+		for (var i = 0; i < 10*4; i++) {
+			d3.selectAll(".majorSalarybar")
+			.select("rect[id=majorSalarybarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		if(i<10)return (d.salary75-d.salary25) * 0.0015;
+            			else if(i>=10&&i<20) return (d.salary90-d.salary75)* 0.0015;
+            			else if(i>=20&&i<30) return 2;
+            			else if(i>=30&&i<40) return (d.salary25-d.salary10)* 0.0015;
+				   })
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+i * (w / 10);
+            	else if(i>=10&&i<20) return chart_base_xl+(i-10+0.5) * (w / 10)-0.5-1;
+            	else if(i>=20&&i<30) return chart_base_xl+(i-20) * (w / 10);
+            	else if(i>=30&&i<40) return chart_base_xl+(i-30+0.5) * (w / 10)-0.5-1;
+			})
+			.attr("width", function(d) { 
+            if(i<10) return w / 10 - 1;
+            else if(i>=10&&i<20) return 2;
+            else if(i>=20&&i<30) return (w / 10) - 1;
+            else if(i>=30&&i<40) return 2;
+          	});
+		}
+		for (var i = 0; i < 108*4; i++) {
+			if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+				d3.selectAll(".submajorSalarybar")
+				.select("rect[id=submajorSalarybarid"+i+"]")
+				.transition(200000)
+				.duration(animationTime)
+				.delay(500) 
+				.attr("x",function(d) {
+					if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	
+				 })
+				.attr("width",function(d) {
+					if(i<108)return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108&&i<108*2) return 2;
+		        	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108*3&&i<108*4) return 2;
+		        	
+				 }) 
+				.attr("height", function(d) {
+					   		if(i<108)return 0;
+		        			else if(i>=108&&i<108*2) return 0;
+		        			else if(i>=108*2&&i<108*3) return 0;
+		        			else if(i>=108*3&&i<108*4) return 0;
+				});
+			}
+
+		}//end of suboccupationsalary
+
+		//suboccupationGPA
+		for (var i = 0; i < 10*4; i++) {
+			d3.selectAll(".majorGPAbar")
+			.select("rect[id=majorGPAbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		if(i<10)return (d.GPA75-d.GPA25) * 30;
+            			else if(i>=10&&i<20) return (d.GPA90-d.GPA75)* 30;
+            			else if(i>=20&&i<30) return 2;
+            			else if(i>=30&&i<40) return (d.GPA25-d.GPA10)* 30;
+				   })
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+i * (w / 10);
+            	else if(i>=10&&i<20) return chart_base_xl+(i-10+0.5) * (w / 10)-0.5-1;
+            	else if(i>=20&&i<30) return chart_base_xl+(i-20) * (w / 10);
+            	else if(i>=30&&i<40) return chart_base_xl+(i-30+0.5) * (w / 10)-0.5-1;
+			})
+			.attr("width", function(d) { 
+            if(i<10) return w / 10 - 1;
+            else if(i>=10&&i<20) return 2;
+            else if(i>=20&&i<30) return (w / 10) - 1;
+            else if(i>=30&&i<40) return 2;
+          	});
+		}
+		for (var i = 0; i < 108*4; i++) {
+			if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+				d3.selectAll(".submajorGPAbar")
+				.select("rect[id=submajorGPAbarid"+i+"]")
+				.transition(200000)
+				.duration(animationTime)
+				.delay(500) 
+				.attr("x",function(d) {
+					if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	
+				 })
+				.attr("width",function(d) {
+					if(i<108)return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108&&i<108*2) return 2;
+		        	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108*3&&i<108*4) return 2;
+		        	
+				 }) 
+				.attr("height", function(d) {
+					   		if(i<108)return 0;
+		        			else if(i>=108&&i<108*2) return 0;
+		        			else if(i>=108*2&&i<108*3) return 0;
+		        			else if(i>=108*3&&i<108*4) return 0;
+				});
+			}
+
+		}//end of suboccupationGPA
+	
+		//suboccupationSAT
+		for (var i = 0; i < 10*4; i++) {
+			d3.selectAll(".majorSATbar")
+			.select("rect[id=majorSATbarid"+i+"]")
+			.transition(200000)
+			.duration(animationTime)
+			.delay(500) 
+			.attr("height", function(d) {
+				   		if(i<10)return (d.SAT75-d.SAT25) * 0.1;
+            			else if(i>=10&&i<20) return (d.SAT90-d.SAT75)* 0.1;
+            			else if(i>=20&&i<30) return 2;
+            			else if(i>=30&&i<40) 
+            			{
+            				if(d.SAT25-d.SAT10<(d.SAT75-d.SAT25)*2)
+						    {return (d.SAT25-d.SAT10)* 0.1;}
+						    else
+						    {return (d.SAT75-d.SAT25)* 0.1*2;}
+            			}
+				   })
+			.attr("x",function(d) {
+				if(i<10)return chart_base_xl+i * (w / 10);
+            	else if(i>=10&&i<20) return chart_base_xl+(i-10+0.5) * (w / 10)-0.5-1;
+            	else if(i>=20&&i<30) return chart_base_xl+(i-20) * (w / 10);
+            	else if(i>=30&&i<40) return chart_base_xl+(i-30+0.5) * (w / 10)-0.5-1;
+			})
+			.attr("width", function(d) { 
+            if(i<10) return w / 10 - 1;
+            else if(i>=10&&i<20) return 2;
+            else if(i>=20&&i<30) return (w / 10) - 1;
+            else if(i>=30&&i<40) return 2;
+          	});
+		}
+		for (var i = 0; i < 108*4; i++) {
+			if (i%108 <= oldmax2&& oldmin2 <= i%108) {
+				d3.selectAll(".submajorSATbar")
+				.select("rect[id=submajorSATbarid"+i+"]")
+				.transition(200000)
+				.duration(animationTime)
+				.delay(500) 
+				.attr("x",function(d) {
+					if(i<108)return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108&&i<108*2) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*2&&i<108*3) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	else if(i>=108*3&&i<108*4) return chart_base_xl+w/2-(max-min+1)/2* (w-w / 80*26) / 28;
+		        	
+				 })
+				.attr("width",function(d) {
+					if(i<108)return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108&&i<108*2) return 2;
+		        	else if(i>=108*2&&i<108*3) return (w-w / 80*26) / 28 - 1;
+		        	else if(i>=108*3&&i<108*4) return 2;
+		        	
+				 }) 
+				.attr("height", function(d) {
+					   		if(i<108)return 0;
+		        			else if(i>=108&&i<108*2) return 0;
+		        			else if(i>=108*2&&i<108*3) return 0;
+		        			else if(i>=108*3&&i<108*4) return 0;
+				});
+			}
+
+		}//end of suboccupationSAT
+
+
+
+	}
+
+
+
+	oldmin2=min;oldmax2=max;oldmaini2=maini
 };
